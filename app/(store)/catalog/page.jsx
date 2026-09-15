@@ -159,12 +159,12 @@ function CatalogContent() {
     <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-8">
       {/* Member-Only Notice Banner */}
       {!isAuthenticated && (
-        <div className="p-4 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3 text-xs shadow-xs">
-          <div className="flex items-center gap-2.5 text-emerald-900 dark:text-emerald-100">
-            <Lock className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+        <div className="p-4 bg-orange-50 dark:bg-slate-900/60 border border-orange-200 dark:border-slate-800 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3 text-xs shadow-xs">
+          <div className="flex items-center gap-2.5 text-orange-900 dark:text-slate-100">
+            <Lock className="w-4 h-4 text-orange-600 dark:text-orange-400 shrink-0" />
             <span>
               <strong>Member Privileges:</strong> Browse categories and items freely. Please{' '}
-              <Link href="/auth/login" className="text-emerald-700 dark:text-emerald-300 underline font-bold">
+              <Link href="/auth/login" className="text-orange-700 dark:text-slate-300 underline font-bold">
                 sign in
               </Link>{' '}
               to add items to cart and complete checkout.
@@ -172,7 +172,7 @@ function CatalogContent() {
           </div>
           <Link
             href="/auth/login"
-            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shrink-0 shadow-xs transition"
+            className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl shrink-0 shadow-xs transition"
           >
             Sign In Now
           </Link>
@@ -180,13 +180,13 @@ function CatalogContent() {
       )}
 
       {/* BREADCRUMB NAVIGATION & DRILL-DOWN HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-emerald-900/60">
-        <div className="flex items-center flex-wrap gap-2 text-xs font-semibold text-slate-500 dark:text-emerald-300/70">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800/60">
+        <div className="flex items-center flex-wrap gap-2 text-xs font-semibold text-slate-500 dark:text-slate-300/70">
           <button
             onClick={handleResetToMain}
-            className="hover:text-emerald-600 dark:hover:text-white transition flex items-center gap-1"
+            className="hover:text-orange-600 dark:hover:text-white transition flex items-center gap-1"
           >
-            <Layers className="w-3.5 h-3.5 text-emerald-600" />
+            <Layers className="w-3.5 h-3.5 text-orange-600" />
             <span>Categories</span>
           </button>
 
@@ -195,7 +195,7 @@ function CatalogContent() {
               <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
               <button
                 onClick={() => setSelectedSubcategory('')}
-                className={`transition ${!selectedSubcategory ? 'text-emerald-700 dark:text-emerald-400 font-bold' : 'hover:text-emerald-600'}`}
+                className={`transition ${!selectedSubcategory ? 'text-orange-700 dark:text-orange-400 font-bold' : 'hover:text-orange-600'}`}
               >
                 {currentCategoryObj?.name || selectedCategory}
               </button>
@@ -205,7 +205,7 @@ function CatalogContent() {
           {selectedSubcategory && (
             <>
               <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-              <span className="text-emerald-700 dark:text-emerald-400 font-bold">
+              <span className="text-orange-700 dark:text-orange-400 font-bold">
                 {currentSubcategoryObj?.name || selectedSubcategory}
               </span>
             </>
@@ -225,7 +225,7 @@ function CatalogContent() {
         {viewLevel === 'subcategories' && (
           <button
             onClick={handleResetToMain}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-emerald-950/80 hover:bg-emerald-50 dark:hover:bg-emerald-900 text-slate-700 dark:text-emerald-200 text-xs font-bold rounded-xl border border-slate-200 dark:border-emerald-800 transition"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-900/80 hover:bg-orange-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-800 transition"
           >
             <ArrowLeft className="w-3.5 h-3.5" /> Back to All Categories
           </button>
@@ -236,14 +236,14 @@ function CatalogContent() {
             {selectedCategory && (
               <button
                 onClick={() => setSelectedSubcategory('')}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-slate-100 dark:bg-emerald-950/80 hover:bg-emerald-50 dark:hover:bg-emerald-900 text-slate-700 dark:text-emerald-200 text-xs font-bold rounded-xl border border-slate-200 dark:border-emerald-800 transition"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-slate-100 dark:bg-slate-900/80 hover:bg-orange-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-800 transition"
               >
                 <ArrowLeft className="w-3.5 h-3.5" /> Back to {currentCategoryObj?.name || 'Subcategories'}
               </button>
             )}
             <button
               onClick={handleResetToMain}
-              className="text-xs text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 font-bold transition"
+              className="text-xs text-slate-500 hover:text-orange-600 dark:hover:text-orange-400 font-bold transition"
             >
               All Categories
             </button>
@@ -260,7 +260,7 @@ function CatalogContent() {
             <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
               Select a Category
             </h1>
-            <p className="text-xs text-slate-500 dark:text-emerald-300/70">
+            <p className="text-xs text-slate-500 dark:text-slate-300/70">
               Click on any category container below to view its specific types and products
             </p>
           </div>
@@ -273,23 +273,23 @@ function CatalogContent() {
                 whileHover={{ y: -6, scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-                className="group relative bg-white dark:bg-[#09261a] border-2 border-slate-200 dark:border-emerald-900/60 hover:border-emerald-500 dark:hover:border-emerald-500 rounded-3xl p-6 text-left shadow-xs hover:shadow-2xl transition-all flex flex-col justify-between overflow-hidden cursor-pointer min-h-[320px]"
+                className="group relative bg-white dark:bg-[#111111] border-2 border-slate-200 dark:border-slate-800/60 hover:border-orange-500 dark:hover:border-orange-500 rounded-3xl p-6 text-left shadow-xs hover:shadow-2xl transition-all flex flex-col justify-between overflow-hidden cursor-pointer min-h-[320px]"
               >
                 {/* Background Subtle Tint */}
-                <div className={`absolute top-0 right-0 w-36 h-36 rounded-full blur-3xl opacity-30 pointer-events-none ${cat.slug === 'clothes' ? 'bg-emerald-500' : cat.slug === 'shoes' ? 'bg-teal-500' : 'bg-green-500'}`} />
+                <div className={`absolute top-0 right-0 w-36 h-36 rounded-full blur-3xl opacity-30 pointer-events-none ${cat.slug === 'clothes' ? 'bg-orange-500' : cat.slug === 'shoes' ? 'bg-teal-500' : 'bg-green-500'}`} />
 
                 {/* Top Section: Icon & Item Count */}
                 <div className="flex items-center justify-between z-10">
-                  <div className="w-14 h-14 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-md shadow-emerald-600/30 group-hover:scale-110 transition-transform">
+                  <div className="w-14 h-14 rounded-2xl bg-orange-600 text-white flex items-center justify-center shadow-md shadow-orange-600/30 group-hover:scale-110 transition-transform">
                     {getCategoryIcon(cat.icon, 'w-7 h-7')}
                   </div>
-                  <span className="px-3 py-1 bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 font-bold text-xs rounded-full">
+                  <span className="px-3 py-1 bg-orange-50 dark:bg-slate-900 border border-orange-200 dark:border-slate-800 text-orange-800 dark:text-slate-300 font-bold text-xs rounded-full">
                     {cat.itemCount} Products
                   </span>
                 </div>
 
                 {/* Center Section: High Quality Category Image Box */}
-                <div className="my-5 w-full h-40 rounded-2xl overflow-hidden bg-slate-100 dark:bg-emerald-950 border border-slate-200/80 dark:border-emerald-900/80 relative z-10">
+                <div className="my-5 w-full h-40 rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 relative z-10">
                   <img
                     src={cat.imageUrl}
                     alt={cat.name}
@@ -306,14 +306,14 @@ function CatalogContent() {
                 {/* Bottom Section: Title & Action CTA */}
                 <div className="z-10 space-y-1">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-xl font-black text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition">
+                    <h2 className="text-xl font-black text-slate-900 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition">
                       {cat.name}
                     </h2>
-                    <span className="w-8 h-8 rounded-full bg-slate-100 dark:bg-emerald-950 group-hover:bg-emerald-600 text-slate-700 dark:text-emerald-200 group-hover:text-white flex items-center justify-center transition-colors">
+                    <span className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-900 group-hover:bg-orange-600 text-slate-700 dark:text-slate-200 group-hover:text-white flex items-center justify-center transition-colors">
                       <ChevronRight className="w-4 h-4" />
                     </span>
                   </div>
-                  <p className="text-xs text-slate-500 dark:text-emerald-300/70 leading-relaxed">
+                  <p className="text-xs text-slate-500 dark:text-slate-300/70 leading-relaxed">
                     {cat.description}
                   </p>
                 </div>
@@ -329,14 +329,14 @@ function CatalogContent() {
       {viewLevel === 'subcategories' && currentCategoryObj && (
         <section className="space-y-6 animate-in fade-in duration-300">
           <div className="text-left space-y-1">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-xs font-bold rounded-full border border-emerald-200 dark:border-emerald-800">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-50 dark:bg-slate-900 text-orange-800 dark:text-slate-300 text-xs font-bold rounded-full border border-orange-200 dark:border-slate-800">
               {getCategoryIcon(currentCategoryObj.icon, 'w-3.5 h-3.5')}
               <span>{currentCategoryObj.name} Department</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
               Choose {currentCategoryObj.name} Type
             </h1>
-            <p className="text-xs text-slate-500 dark:text-emerald-300/70">
+            <p className="text-xs text-slate-500 dark:text-slate-300/70">
               Click on any subcategory box to open its products:
             </p>
           </div>
@@ -349,20 +349,20 @@ function CatalogContent() {
                 whileHover={{ y: -5, scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-                className="group relative bg-white dark:bg-[#09261a] border-2 border-slate-200 dark:border-emerald-900/60 hover:border-emerald-500 dark:hover:border-emerald-500 rounded-3xl p-6 text-left shadow-xs hover:shadow-xl transition-all flex flex-col justify-between overflow-hidden cursor-pointer min-h-[280px]"
+                className="group relative bg-white dark:bg-[#111111] border-2 border-slate-200 dark:border-slate-800/60 hover:border-orange-500 dark:hover:border-orange-500 rounded-3xl p-6 text-left shadow-xs hover:shadow-xl transition-all flex flex-col justify-between overflow-hidden cursor-pointer min-h-[280px]"
               >
                 {/* Top Info */}
                 <div className="flex items-center justify-between mb-3">
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold shadow-md shadow-emerald-600/20 group-hover:scale-110 transition-transform">
+                  <div className="w-12 h-12 rounded-2xl bg-orange-600 text-white flex items-center justify-center font-bold shadow-md shadow-orange-600/20 group-hover:scale-110 transition-transform">
                     {getCategoryIcon(sub.icon, 'w-6 h-6')}
                   </div>
-                  <span className="px-3 py-1 bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 font-bold text-xs rounded-full">
+                  <span className="px-3 py-1 bg-orange-50 dark:bg-slate-900 border border-orange-200 dark:border-slate-800 text-orange-800 dark:text-slate-300 font-bold text-xs rounded-full">
                     {sub.itemCount} Items
                   </span>
                 </div>
 
                 {/* Subcategory Image */}
-                <div className="my-3 w-full h-36 rounded-2xl overflow-hidden bg-slate-100 dark:bg-emerald-950 border border-slate-200/80 dark:border-emerald-900/80 relative">
+                <div className="my-3 w-full h-36 rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 relative">
                   <img
                     src={sub.imageUrl}
                     alt={sub.name}
@@ -377,14 +377,14 @@ function CatalogContent() {
                 {/* Bottom Details */}
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-black text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition">
+                    <h3 className="text-lg font-black text-slate-900 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition">
                       {sub.name}
                     </h3>
-                    <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400 group-hover:translate-x-1 transition-transform flex items-center gap-0.5">
+                    <span className="text-xs font-bold text-orange-700 dark:text-orange-400 group-hover:translate-x-1 transition-transform flex items-center gap-0.5">
                       Open Items →
                     </span>
                   </div>
-                  <p className="text-xs text-slate-500 dark:text-emerald-300/70">
+                  <p className="text-xs text-slate-500 dark:text-slate-300/70">
                     {sub.description}
                   </p>
                 </div>
@@ -393,13 +393,13 @@ function CatalogContent() {
           </div>
 
           {/* Quick View All in Category */}
-          <div className="p-4 bg-slate-50 dark:bg-emerald-950/40 rounded-2xl border border-slate-200 dark:border-emerald-900 flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-700 dark:text-emerald-200">
+          <div className="p-4 bg-slate-50 dark:bg-slate-900/40 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+            <span className="text-xs font-bold text-slate-700 dark:text-slate-200">
               Or view all {currentCategoryObj.name} products together:
             </span>
             <button
               onClick={() => setSelectedSubcategory('all')}
-              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs transition"
+              className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl shadow-xs transition"
             >
               Show All {currentCategoryObj.name} ({products.length})
             </button>
@@ -415,15 +415,15 @@ function CatalogContent() {
           {/* Subcategory switcher pills if inside a category */}
           {currentCategoryObj && (
             <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
-              <span className="text-xs font-bold text-slate-400 dark:text-emerald-400/60 uppercase tracking-wider shrink-0 mr-1">
+              <span className="text-xs font-bold text-slate-400 dark:text-slate-400/60 uppercase tracking-wider shrink-0 mr-1">
                 {currentCategoryObj.name} Types:
               </span>
               <button
                 onClick={() => setSelectedSubcategory('all')}
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition shrink-0 ${
                   selectedSubcategory === 'all' || !selectedSubcategory
-                    ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'bg-slate-100 dark:bg-emerald-950/60 text-slate-700 dark:text-emerald-200 border border-slate-200 dark:border-emerald-900'
+                    ? 'bg-orange-600 text-white shadow-xs'
+                    : 'bg-slate-100 dark:bg-slate-900/60 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-800'
                 }`}
               >
                 All {currentCategoryObj.name}
@@ -437,8 +437,8 @@ function CatalogContent() {
                     onClick={() => setSelectedSubcategory(sub.slug)}
                     className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 ${
                       isActive
-                        ? 'bg-emerald-600 text-white shadow-xs'
-                        : 'bg-slate-100 dark:bg-emerald-950/60 text-slate-700 dark:text-emerald-200 border border-slate-200 dark:border-emerald-900 hover:border-emerald-500'
+                        ? 'bg-orange-600 text-white shadow-xs'
+                        : 'bg-slate-100 dark:bg-slate-900/60 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-800 hover:border-orange-500'
                     }`}
                   >
                     {getCategoryIcon(sub.icon, 'w-3.5 h-3.5')}
@@ -450,7 +450,7 @@ function CatalogContent() {
           )}
 
           {/* Filter & Sort Toolbar */}
-          <div className="bg-white dark:bg-[#09261a] border border-slate-200 dark:border-emerald-900/50 rounded-2xl p-3.5 sm:p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs">
+          <div className="bg-white dark:bg-[#111111] border border-slate-200 dark:border-slate-800/50 rounded-2xl p-3.5 sm:p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs">
             {/* Left Active Filters info */}
             <div className="flex flex-wrap items-center gap-2 text-xs">
               <span className="font-bold text-slate-900 dark:text-white text-sm">
@@ -458,7 +458,7 @@ function CatalogContent() {
               </span>
 
               {selectedSubcategory && (
-                <span className="px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-bold rounded-lg flex items-center gap-1">
+                <span className="px-2.5 py-1 bg-orange-50 dark:bg-slate-900 text-orange-800 dark:text-slate-300 border border-orange-200 dark:border-slate-800 font-bold rounded-lg flex items-center gap-1">
                   Type: {currentSubcategoryObj?.name || selectedSubcategory}
                   <button onClick={() => setSelectedSubcategory('')} className="hover:text-black dark:hover:text-white">
                     ×
@@ -467,7 +467,7 @@ function CatalogContent() {
               )}
 
               {searchQuery && (
-                <span className="px-2.5 py-1 bg-slate-100 dark:bg-emerald-950 text-slate-800 dark:text-emerald-200 border border-slate-200 dark:border-emerald-800 font-bold rounded-lg flex items-center gap-1">
+                <span className="px-2.5 py-1 bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-800 font-bold rounded-lg flex items-center gap-1">
                   Search: "{searchQuery}"
                   <button onClick={() => setSearchQuery('')} className="hover:text-red-500">
                     ×
@@ -476,7 +476,7 @@ function CatalogContent() {
               )}
 
               {selectedBrand && (
-                <span className="px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-bold rounded-lg flex items-center gap-1">
+                <span className="px-2.5 py-1 bg-orange-50 dark:bg-slate-900 text-orange-800 dark:text-slate-300 border border-orange-200 dark:border-slate-800 font-bold rounded-lg flex items-center gap-1">
                   Brand: {selectedBrand}
                   <button onClick={() => setSelectedBrand('')} className="hover:text-black dark:hover:text-white">
                     ×
@@ -490,7 +490,7 @@ function CatalogContent() {
               <select
                 value={selectedBrand}
                 onChange={(e) => setSelectedBrand(e.target.value)}
-                className="px-3 py-1.5 bg-slate-50 dark:bg-emerald-950/60 border border-slate-200 dark:border-emerald-800/60 rounded-xl text-slate-800 dark:text-emerald-100 font-semibold focus:outline-none focus:border-emerald-600 cursor-pointer"
+                className="px-3 py-1.5 bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/60 rounded-xl text-slate-800 dark:text-slate-100 font-semibold focus:outline-none focus:border-orange-600 cursor-pointer"
               >
                 <option value="">All Brands</option>
                 {brands.map((b) => (
@@ -504,31 +504,31 @@ function CatalogContent() {
                 onClick={() => setInStockOnly(!inStockOnly)}
                 className={`px-3 py-1.5 rounded-xl font-semibold border transition flex items-center gap-1.5 ${
                   inStockOnly
-                    ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
-                    : 'bg-slate-50 dark:bg-emerald-950/60 border border-slate-200 dark:border-emerald-800/60 text-slate-700 dark:text-emerald-200'
+                    ? 'bg-orange-600 text-white border-orange-600 shadow-xs'
+                    : 'bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/60 text-slate-700 dark:text-slate-200'
                 }`}
               >
                 {inStockOnly && <Check className="w-3.5 h-3.5" />}
                 <span>In Stock</span>
               </button>
 
-              <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-emerald-950/60 border border-slate-200 dark:border-emerald-800/60 rounded-xl px-3 py-1.5">
-                <span className="text-slate-400 dark:text-emerald-400/60 font-semibold">Sort:</span>
+              <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/60 rounded-xl px-3 py-1.5">
+                <span className="text-slate-400 dark:text-slate-400/60 font-semibold">Sort:</span>
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
                   className="bg-transparent text-slate-800 dark:text-white font-semibold focus:outline-none cursor-pointer"
                 >
-                  <option value="newest" className="bg-white dark:bg-[#09261a] text-slate-900 dark:text-white">
+                  <option value="newest" className="bg-white dark:bg-[#111111] text-slate-900 dark:text-white">
                     Newest First
                   </option>
-                  <option value="price-asc" className="bg-white dark:bg-[#09261a] text-slate-900 dark:text-white">
+                  <option value="price-asc" className="bg-white dark:bg-[#111111] text-slate-900 dark:text-white">
                     Price: Low to High
                   </option>
-                  <option value="price-desc" className="bg-white dark:bg-[#09261a] text-slate-900 dark:text-white">
+                  <option value="price-desc" className="bg-white dark:bg-[#111111] text-slate-900 dark:text-white">
                     Price: High to Low
                   </option>
-                  <option value="rating" className="bg-white dark:bg-[#09261a] text-slate-900 dark:text-white">
+                  <option value="rating" className="bg-white dark:bg-[#111111] text-slate-900 dark:text-white">
                     Top Rated
                   </option>
                 </select>
@@ -537,7 +537,7 @@ function CatalogContent() {
               {(selectedCategory || selectedSubcategory || selectedBrand || inStockOnly || searchQuery) && (
                 <button
                   onClick={handleResetToMain}
-                  className="p-1.5 text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition"
+                  className="p-1.5 text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 transition"
                   title="Reset all filters"
                 >
                   <RotateCcw className="w-4 h-4" />
@@ -553,20 +553,20 @@ function CatalogContent() {
                 {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                   <div
                     key={i}
-                    className="aspect-square bg-slate-100 dark:bg-emerald-950/40 rounded-2xl animate-pulse"
+                    className="aspect-square bg-slate-100 dark:bg-slate-900/40 rounded-2xl animate-pulse"
                   />
                 ))}
               </div>
             ) : products.length === 0 ? (
-              <div className="bg-white dark:bg-[#09261a] border border-slate-200 dark:border-emerald-900/50 rounded-2xl p-12 text-center space-y-4 shadow-xs">
-                <Search className="w-12 h-12 text-slate-400 dark:text-emerald-400/60 mx-auto" />
+              <div className="bg-white dark:bg-[#111111] border border-slate-200 dark:border-slate-800/50 rounded-2xl p-12 text-center space-y-4 shadow-xs">
+                <Search className="w-12 h-12 text-slate-400 dark:text-slate-400/60 mx-auto" />
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white">No products found</h3>
-                <p className="text-xs text-slate-500 dark:text-emerald-200/70 max-w-sm mx-auto">
+                <p className="text-xs text-slate-500 dark:text-slate-200/70 max-w-sm mx-auto">
                   We couldn't find items in this specific section. Try exploring other types or clearing search filters.
                 </p>
                 <button
                   onClick={handleResetToMain}
-                  className="px-5 py-2.5 bg-emerald-600 text-white text-xs font-bold rounded-xl hover:bg-emerald-700 transition"
+                  className="px-5 py-2.5 bg-orange-600 text-white text-xs font-bold rounded-xl hover:bg-orange-700 transition"
                 >
                   Explore All Categories
                 </button>
@@ -597,7 +597,7 @@ function CatalogContent() {
 
 export default function CatalogPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-[#061e14] text-slate-900 dark:text-emerald-50 transition-colors duration-200">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-[#0a0a0a] text-slate-900 dark:text-slate-50 transition-colors duration-200">
       <AnnouncementBar />
       <Navbar />
       <Suspense fallback={<div className="p-12 text-center text-slate-500 font-bold">Loading catalog...</div>}>

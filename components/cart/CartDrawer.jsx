@@ -110,7 +110,7 @@ export default function CartDrawer() {
                   <span className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
                     <Truck className="w-3.5 h-3.5 text-slate-400" />
                     {freeShippingRemaining === 0 ? (
-                      <span className="text-emerald-600 dark:text-emerald-400 font-medium">
+                      <span className="text-orange-600 dark:text-orange-400 font-medium">
                         Free shipping unlocked!
                       </span>
                     ) : (
@@ -127,7 +127,7 @@ export default function CartDrawer() {
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${progressPercent}%` }}
-                    className="h-full bg-slate-900 dark:bg-white rounded-full"
+                    className="h-full bg-gradient-to-r from-orange-400 to-orange-600 rounded-full"
                   />
                 </div>
               </div>
@@ -209,8 +209,8 @@ export default function CartDrawer() {
                   {/* Coupon */}
                   <div>
                     {coupon ? (
-                      <div className="flex items-center justify-between bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50 p-2.5 rounded-lg text-xs">
-                        <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-medium">
+                      <div className="flex items-center justify-between bg-orange-50 dark:bg-slate-900/30 border border-orange-200 dark:border-slate-800/50 p-2.5 rounded-lg text-xs">
+                        <div className="flex items-center gap-2 text-orange-700 dark:text-orange-400 font-medium">
                           <Tag className="w-3.5 h-3.5" />
                           <span>
                             <strong>{coupon.code}</strong> applied (-{formatCurrency(coupon.discountAmount)})
@@ -254,7 +254,7 @@ export default function CartDrawer() {
                       <span className="font-medium text-slate-900 dark:text-white">{formatCurrency(subtotal)}</span>
                     </div>
                     {discountAmount > 0 && (
-                      <div className="flex justify-between text-emerald-600 dark:text-emerald-400 font-medium">
+                      <div className="flex justify-between text-orange-600 dark:text-orange-400 font-medium">
                         <span>Discount</span>
                         <span>-{formatCurrency(discountAmount)}</span>
                       </div>
@@ -263,7 +263,7 @@ export default function CartDrawer() {
                       <span>Shipping</span>
                       <span>
                         {shippingCost === 0 ? (
-                          <strong className="text-emerald-600 dark:text-emerald-400">FREE</strong>
+                          <strong className="text-orange-600 dark:text-orange-400">FREE</strong>
                         ) : (
                           formatCurrency(shippingCost)
                         )}

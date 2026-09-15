@@ -75,7 +75,7 @@ export default function SupportWidget() {
             <div>
               <h3 className="font-semibold text-sm text-slate-900 dark:text-white">Support</h3>
               <span className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                <span className="w-1.5 h-1.5 rounded-full bg-orange-500" />
                 Online
               </span>
             </div>

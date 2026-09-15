@@ -60,18 +60,18 @@ export default function ProductDetailPage({ params: paramsPromise }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white dark:bg-[#061e14] flex items-center justify-center text-slate-900 dark:text-white">
-        <div className="w-10 h-10 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-white dark:bg-[#0a0a0a] flex items-center justify-center text-slate-900 dark:text-white">
+        <div className="w-10 h-10 border-4 border-orange-600 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-white dark:bg-[#061e14] flex flex-col items-center justify-center text-slate-900 dark:text-white p-6">
+      <div className="min-h-screen bg-white dark:bg-[#0a0a0a] flex flex-col items-center justify-center text-slate-900 dark:text-white p-6">
         <h2 className="text-2xl font-bold mb-2">Product Not Found</h2>
-        <p className="text-slate-500 dark:text-emerald-400/60 text-sm mb-4">The requested item does not exist or has been archived.</p>
-        <Link href="/catalog" className="px-5 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-bold">
+        <p className="text-slate-500 dark:text-slate-400/60 text-sm mb-4">The requested item does not exist or has been archived.</p>
+        <Link href="/catalog" className="px-5 py-2.5 bg-orange-600 text-white rounded-xl text-xs font-bold">
           Return to Catalog
         </Link>
       </div>
@@ -100,16 +100,16 @@ export default function ProductDetailPage({ params: paramsPromise }) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-[#061e14] text-slate-900 dark:text-emerald-50 transition-colors duration-200">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-[#0a0a0a] text-slate-900 dark:text-slate-50 transition-colors duration-200">
       <AnnouncementBar />
       <Navbar />
 
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-16">
         {/* Breadcrumb */}
-        <div className="text-xs text-slate-500 dark:text-emerald-400/60 flex items-center gap-1.5 font-semibold">
-          <Link href="/" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition">Home</Link>
+        <div className="text-xs text-slate-500 dark:text-slate-400/60 flex items-center gap-1.5 font-semibold">
+          <Link href="/" className="hover:text-orange-600 dark:hover:text-orange-400 transition">Home</Link>
           <span>/</span>
-          <Link href={`/catalog?category=${product.category}`} className="hover:text-emerald-600 dark:hover:text-emerald-400 transition">
+          <Link href={`/catalog?category=${product.category}`} className="hover:text-orange-600 dark:hover:text-orange-400 transition">
             {product.categoryName || product.category}
           </Link>
           <span>/</span>
@@ -127,12 +127,12 @@ export default function ProductDetailPage({ params: paramsPromise }) {
           <div className="lg:col-span-6 space-y-6">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <span className="px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 font-bold text-[11px] rounded-lg uppercase tracking-wider">
+                <span className="px-2.5 py-1 bg-orange-50 dark:bg-slate-900 border border-orange-200 dark:border-slate-800 text-orange-800 dark:text-slate-300 font-bold text-[11px] rounded-lg uppercase tracking-wider">
                   {product.brand || 'Certified Brand'}
                 </span>
                 {product.isTrending && (
-                  <span className="px-2.5 py-1 bg-emerald-900/90 text-emerald-100 border border-emerald-700 text-[11px] font-bold rounded-lg uppercase flex items-center gap-1">
-                    <Zap className="w-3 h-3 fill-emerald-300 text-emerald-300" /> Trending
+                  <span className="px-2.5 py-1 bg-slate-800/90 text-slate-100 border border-orange-700 text-[11px] font-bold rounded-lg uppercase flex items-center gap-1">
+                    <Zap className="w-3 h-3 fill-orange-300 text-slate-300" /> Trending
                   </span>
                 )}
               </div>
@@ -143,34 +143,34 @@ export default function ProductDetailPage({ params: paramsPromise }) {
 
               {/* Rating & SKU */}
               <div className="flex items-center gap-4 mt-3 text-xs">
-                <div className="flex items-center gap-1 text-emerald-700 dark:text-emerald-400 font-bold bg-white dark:bg-[#09261a] px-2.5 py-1 rounded-xl border border-slate-200 dark:border-emerald-900/60 shadow-xs">
-                  <Star className="w-3.5 h-3.5 fill-emerald-600 text-emerald-600" />
+                <div className="flex items-center gap-1 text-orange-700 dark:text-orange-400 font-bold bg-white dark:bg-[#111111] px-2.5 py-1 rounded-xl border border-slate-200 dark:border-slate-800/60 shadow-xs">
+                  <Star className="w-3.5 h-3.5 fill-orange-600 text-orange-600" />
                   <span>{product.rating || 5.0}</span>
-                  <span className="text-slate-400 dark:text-emerald-400/60 font-normal">({reviews.length} reviews)</span>
+                  <span className="text-slate-400 dark:text-slate-400/60 font-normal">({reviews.length} reviews)</span>
                 </div>
-                <span className="text-slate-400 dark:text-emerald-400/60 font-mono font-semibold">SKU: {selectedVariant?.sku || product.sku}</span>
+                <span className="text-slate-400 dark:text-slate-400/60 font-mono font-semibold">SKU: {selectedVariant?.sku || product.sku}</span>
               </div>
             </div>
 
             {/* Price Box */}
-            <div className="p-5 bg-white dark:bg-[#09261a] border border-slate-200 dark:border-emerald-900/60 rounded-2xl flex items-baseline gap-4 shadow-xs">
+            <div className="p-5 bg-white dark:bg-[#111111] border border-slate-200 dark:border-slate-800/60 rounded-2xl flex items-baseline gap-4 shadow-xs">
               <span className="text-3xl font-black text-slate-900 dark:text-white">
                 {formatCurrency(currentPrice)}
               </span>
               {product.originalPrice && product.originalPrice > currentPrice && (
-                <span className="text-base text-slate-400 dark:text-emerald-400/60 line-through">
+                <span className="text-base text-slate-400 dark:text-slate-400/60 line-through">
                   {formatCurrency(product.originalPrice)}
                 </span>
               )}
               {discountPercent > 0 && (
-                <span className="px-2.5 py-1 bg-emerald-600 text-white font-bold text-xs rounded-lg uppercase">
+                <span className="px-2.5 py-1 bg-orange-600 text-white font-bold text-xs rounded-lg uppercase">
                   Save {discountPercent}%
                 </span>
               )}
             </div>
 
             {/* Description */}
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-emerald-100/80 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-100/80 leading-relaxed">
               {product.description}
             </p>
 
@@ -188,7 +188,7 @@ export default function ProductDetailPage({ params: paramsPromise }) {
               {isAuthenticated ? (
                 <>
                   <div className="flex items-center gap-4">
-                    <div className="flex items-center bg-white dark:bg-emerald-950 border border-slate-200 dark:border-emerald-800 rounded-xl px-3 py-2">
+                    <div className="flex items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2">
                       <button
                         onClick={() => setQuantity(Math.max(1, quantity - 1))}
                         className="text-slate-500 hover:text-slate-900 dark:hover:text-white p-1"
@@ -206,14 +206,14 @@ export default function ProductDetailPage({ params: paramsPromise }) {
 
                     <button
                       onClick={handleAddToCart}
-                      className="flex-1 py-3.5 px-6 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2 transition"
+                      className="flex-1 py-3.5 px-6 bg-orange-600 hover:bg-orange-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-lg shadow-orange-600/20 flex items-center justify-center gap-2 transition"
                     >
                       <ShoppingBag className="w-4 h-4" /> Add to Cart
                     </button>
 
                     <button
                       onClick={() => toggleWishlist(product)}
-                      className={`p-3.5 rounded-xl border transition ${inWishlist ? 'bg-rose-600 text-white border-rose-600' : 'bg-white dark:bg-emerald-950 border-slate-200 dark:border-emerald-800 text-slate-600 dark:text-emerald-300 hover:text-slate-900 dark:hover:text-white'}`}
+                      className={`p-3.5 rounded-xl border transition ${inWishlist ? 'bg-rose-600 text-white border-rose-600' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'}`}
                       aria-label="Wishlist"
                     >
                       <Heart className={`w-5 h-5 ${inWishlist ? 'fill-white' : ''}`} />
@@ -222,30 +222,30 @@ export default function ProductDetailPage({ params: paramsPromise }) {
 
                   <button
                     onClick={handleBuyNow}
-                    className="w-full py-3.5 bg-emerald-950 hover:bg-emerald-900 border border-emerald-800 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2"
+                    className="w-full py-3.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2"
                   >
-                    <Zap className="w-4 h-4 fill-emerald-300 text-emerald-300" /> Instant Buy Now
+                    <Zap className="w-4 h-4 fill-orange-300 text-slate-300" /> Instant Buy Now
                   </button>
                 </>
               ) : (
                 /* GUEST USER CTA */
-                <div className="p-5 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 rounded-2xl space-y-3 text-center shadow-xs">
-                  <div className="flex items-center justify-center gap-2 text-emerald-900 dark:text-emerald-300 font-bold text-sm">
-                    <Lock className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Member Purchasing Required
+                <div className="p-5 bg-orange-50 dark:bg-slate-900/60 border border-orange-200 dark:border-slate-800 rounded-2xl space-y-3 text-center shadow-xs">
+                  <div className="flex items-center justify-center gap-2 text-orange-900 dark:text-slate-300 font-bold text-sm">
+                    <Lock className="w-4 h-4 text-orange-600 dark:text-orange-400" /> Member Purchasing Required
                   </div>
-                  <p className="text-xs text-slate-600 dark:text-emerald-200/70">
+                  <p className="text-xs text-slate-600 dark:text-slate-200/70">
                     Sign in to your customer account to add this item to your cart and complete checkout.
                   </p>
                   <div className="grid grid-cols-2 gap-3 pt-1">
                     <Link
                       href={`/auth/login?redirect=/product/${product.slug}`}
-                      className="py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md transition"
+                      className="py-3 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs rounded-xl shadow-md transition"
                     >
                       Sign In Now
                     </Link>
                     <Link
                       href="/auth/signup"
-                      className="py-3 bg-white dark:bg-emerald-900 hover:bg-emerald-100 dark:hover:bg-emerald-800 text-slate-900 dark:text-white font-bold text-xs rounded-xl border border-slate-200 dark:border-emerald-700 transition"
+                      className="py-3 bg-white dark:bg-slate-800 hover:bg-orange-100 dark:hover:bg-slate-800 text-slate-900 dark:text-white font-bold text-xs rounded-xl border border-slate-200 dark:border-orange-700 transition"
                     >
                       Create Account
                     </Link>
@@ -255,17 +255,17 @@ export default function ProductDetailPage({ params: paramsPromise }) {
             </div>
 
             {/* Value Props */}
-            <div className="grid grid-cols-3 gap-3 pt-4 border-t border-slate-200 dark:border-emerald-900/60 text-[11px] text-slate-600 dark:text-emerald-300/80 font-semibold">
+            <div className="grid grid-cols-3 gap-3 pt-4 border-t border-slate-200 dark:border-slate-800/60 text-[11px] text-slate-600 dark:text-slate-300/80 font-semibold">
               <div className="flex items-center gap-2">
-                <Truck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <Truck className="w-4 h-4 text-orange-600 dark:text-orange-400" />
                 <span>48h Dispatch</span>
               </div>
               <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <ShieldCheck className="w-4 h-4 text-orange-600 dark:text-orange-400" />
                 <span>1-Yr Warranty</span>
               </div>
               <div className="flex items-center gap-2">
-                <RotateCcw className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <RotateCcw className="w-4 h-4 text-orange-600 dark:text-orange-400" />
                 <span>7-Day Return</span>
               </div>
             </div>
@@ -274,13 +274,13 @@ export default function ProductDetailPage({ params: paramsPromise }) {
 
         {/* Specifications */}
         {product.specifications && (
-          <div className="bg-white dark:bg-[#09261a] border border-slate-200 dark:border-emerald-900/60 rounded-2xl p-8 space-y-6 shadow-xs">
+          <div className="bg-white dark:bg-[#111111] border border-slate-200 dark:border-slate-800/60 rounded-2xl p-8 space-y-6 shadow-xs">
             <h3 className="text-xl font-bold text-slate-900 dark:text-white">Technical Specifications</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
               {Object.entries(product.specifications).map(([key, value]) => (
-                <div key={key} className="flex justify-between py-3 px-4 bg-slate-50 dark:bg-emerald-950 rounded-xl border border-slate-200 dark:border-emerald-850">
-                  <span className="text-slate-500 dark:text-emerald-300/70 font-semibold">{key}</span>
-                  <span className="text-slate-900 dark:text-emerald-300 font-bold">{value}</span>
+                <div key={key} className="flex justify-between py-3 px-4 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-orange-850">
+                  <span className="text-slate-500 dark:text-slate-300/70 font-semibold">{key}</span>
+                  <span className="text-slate-900 dark:text-slate-300 font-bold">{value}</span>
                 </div>
               ))}
             </div>

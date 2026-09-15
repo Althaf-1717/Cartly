@@ -31,26 +31,26 @@ function SignupForm() {
   };
 
   return (
-    <div className="w-full max-w-md bg-white dark:bg-[#09261a] border border-slate-200 dark:border-emerald-900/50 rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
+    <div className="w-full max-w-md bg-white dark:bg-[#111111] border border-slate-200 dark:border-slate-800/50 rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
       <div className="text-center space-y-2">
         <Link href="/" className="inline-flex items-center gap-2">
-          <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-md shadow-emerald-600/20 font-bold">
+          <div className="w-10 h-10 rounded-xl bg-orange-600 text-white flex items-center justify-center shadow-md shadow-orange-600/20 font-bold">
             <ShoppingBag className="w-5 h-5" />
           </div>
           <span className="text-xl font-mono font-bold tracking-tight text-slate-900 dark:text-white">CARTLY</span>
         </Link>
         <h2 className="text-xl font-bold text-slate-900 dark:text-white">Create New Account</h2>
-        <p className="text-xs text-slate-500 dark:text-emerald-300/70">Join Cartly to explore or manage hardware</p>
+        <p className="text-xs text-slate-500 dark:text-slate-300/70">Join Cartly to explore or manage hardware</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-1.5 p-1 bg-slate-100 dark:bg-emerald-950/80 rounded-xl border border-slate-200 dark:border-emerald-800 text-xs">
+      <div className="grid grid-cols-2 gap-1.5 p-1 bg-slate-100 dark:bg-slate-900/80 rounded-xl border border-slate-200 dark:border-slate-800 text-xs">
         <button
           type="button"
           onClick={() => setRole('customer')}
           className={`py-2 rounded-lg font-bold transition ${
             role === 'customer'
-              ? 'bg-emerald-600 text-white shadow-xs'
-              : 'text-slate-600 dark:text-emerald-200'
+              ? 'bg-orange-600 text-white shadow-xs'
+              : 'text-slate-600 dark:text-slate-200'
           }`}
         >
           Customer Account
@@ -60,8 +60,8 @@ function SignupForm() {
           onClick={() => setRole('admin')}
           className={`py-2 rounded-lg font-bold transition ${
             role === 'admin'
-              ? 'bg-emerald-600 text-white shadow-xs'
-              : 'text-slate-600 dark:text-emerald-200'
+              ? 'bg-orange-600 text-white shadow-xs'
+              : 'text-slate-600 dark:text-slate-200'
           }`}
         >
           Store Admin
@@ -70,65 +70,65 @@ function SignupForm() {
 
       <form onSubmit={handleRegister} className="space-y-3 text-xs">
         <div>
-          <label className="block text-slate-700 dark:text-emerald-100 font-semibold mb-1">Full Name</label>
+          <label className="block text-slate-700 dark:text-slate-100 font-semibold mb-1">Full Name</label>
           <input
             type="text"
             required
             placeholder="Aarav Sharma"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
-            className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-emerald-950 border border-slate-200 dark:border-emerald-800 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-600 font-medium"
+            className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-orange-600 font-medium"
           />
         </div>
 
         <div>
-          <label className="block text-slate-700 dark:text-emerald-100 font-semibold mb-1">Email Address</label>
+          <label className="block text-slate-700 dark:text-slate-100 font-semibold mb-1">Email Address</label>
           <input
             type="email"
             required
             placeholder="aarav.sharma@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-emerald-950 border border-slate-200 dark:border-emerald-800 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-600 font-medium"
+            className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-orange-600 font-medium"
           />
         </div>
 
         <div>
-          <label className="block text-slate-700 dark:text-emerald-100 font-semibold mb-1">Phone Number</label>
+          <label className="block text-slate-700 dark:text-slate-100 font-semibold mb-1">Phone Number</label>
           <input
             type="tel"
             placeholder="+91 98765 43210"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-emerald-950 border border-slate-200 dark:border-emerald-800 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-600 font-medium"
+            className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-orange-600 font-medium"
           />
         </div>
 
         <div>
-          <label className="block text-slate-700 dark:text-emerald-100 font-semibold mb-1">Password</label>
+          <label className="block text-slate-700 dark:text-slate-100 font-semibold mb-1">Password</label>
           <input
             type="password"
             required
             placeholder="Choose a strong password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-emerald-950 border border-slate-200 dark:border-emerald-800 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-600 font-medium"
+            className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-orange-600 font-medium"
           />
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold rounded-xl shadow-md shadow-emerald-600/20 transition flex items-center justify-center gap-2 mt-2"
+          className="w-full py-3.5 bg-orange-600 hover:bg-orange-700 disabled:opacity-50 text-white font-bold rounded-xl shadow-md shadow-orange-600/20 transition flex items-center justify-center gap-2 mt-2"
         >
           <UserPlus className="w-4 h-4" />
           <span>{loading ? 'Creating Account...' : `Register as ${role === 'admin' ? 'Admin' : 'Customer'}`}</span>
         </button>
       </form>
 
-      <div className="text-center text-xs text-slate-500 dark:text-emerald-400/60 pt-3 border-t border-slate-200 dark:border-emerald-900/60">
+      <div className="text-center text-xs text-slate-500 dark:text-slate-400/60 pt-3 border-t border-slate-200 dark:border-slate-800/60">
         Already registered?{' '}
-        <Link href="/auth/login" className="text-emerald-600 dark:text-emerald-400 font-bold hover:underline">
+        <Link href="/auth/login" className="text-orange-600 dark:text-orange-400 font-bold hover:underline">
           Sign In Here →
         </Link>
       </div>
@@ -138,7 +138,7 @@ function SignupForm() {
 
 export default function SignupPage() {
   return (
-    <div className="min-h-screen bg-white dark:bg-[#061e14] flex flex-col items-center justify-center p-4 text-slate-900 dark:text-emerald-50 transition-colors duration-200">
+    <div className="min-h-screen bg-white dark:bg-[#0a0a0a] flex flex-col items-center justify-center p-4 text-slate-900 dark:text-slate-50 transition-colors duration-200">
       <Suspense fallback={<div className="p-8 text-center text-slate-500">Loading registration form...</div>}>
         <SignupForm />
       </Suspense>

@@ -137,7 +137,7 @@ export default function ProductCard({ product, onQuickView }) {
               onClick={handleAddToCart}
               className={`w-full py-2.5 px-4 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-2 active:scale-[0.98] ${
                 inCart
-                  ? 'bg-emerald-600 text-white'
+                  ? 'bg-orange-600 text-white'
                   : 'bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900'
               }`}
             >

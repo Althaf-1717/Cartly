@@ -48,7 +48,7 @@ export default function SplashIntro() {
               initial={{ width: '0%' }}
               animate={{ width: '100%' }}
               transition={{ duration: 1.1, ease: 'easeInOut' }}
-              className="h-full bg-slate-900 dark:bg-white rounded-full"
+              className="h-full bg-gradient-to-r from-orange-400 to-orange-600 rounded-full"
             />
           </motion.div>
         </motion.div>

@@ -51,25 +51,25 @@ export default function QuickViewModal({ product, isOpen, onClose }) {
           initial={{ opacity: 0, scale: 0.95, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 15 }}
-          className="relative w-full max-w-3xl bg-white dark:bg-[#09261a] border border-slate-200 dark:border-emerald-800 rounded-2xl overflow-hidden shadow-2xl z-10 grid grid-cols-1 md:grid-cols-2 text-slate-900 dark:text-white"
+          className="relative w-full max-w-3xl bg-white dark:bg-[#111111] border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-2xl z-10 grid grid-cols-1 md:grid-cols-2 text-slate-900 dark:text-white"
         >
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 rounded-full bg-slate-100 dark:bg-emerald-950 hover:bg-slate-200 dark:hover:bg-emerald-900 text-slate-500 dark:text-emerald-200 hover:text-slate-900 dark:hover:text-white transition z-20"
+            className="absolute top-4 right-4 p-2 rounded-full bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white transition z-20"
           >
             <X className="w-5 h-5" />
           </button>
 
           {/* Left Gallery */}
-          <div className="p-6 bg-slate-50 dark:bg-emerald-950/60 flex flex-col justify-between border-r border-slate-100 dark:border-emerald-900/60">
-            <div className="aspect-square w-full rounded-xl overflow-hidden bg-slate-100 dark:bg-emerald-950 border border-slate-200 dark:border-emerald-900 relative">
+          <div className="p-6 bg-slate-50 dark:bg-slate-900/60 flex flex-col justify-between border-r border-slate-100 dark:border-slate-800/60">
+            <div className="aspect-square w-full rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 relative">
               <img
                 src={currentImage}
                 alt={product.name}
                 className="w-full h-full object-cover"
               />
               {discountPercent > 0 && (
-                <span className="absolute top-3 left-3 px-2 py-0.5 bg-emerald-600 text-white font-bold text-[10px] rounded-md">
+                <span className="absolute top-3 left-3 px-2 py-0.5 bg-orange-600 text-white font-bold text-[10px] rounded-md">
                   {discountPercent}% OFF
                 </span>
               )}
@@ -81,7 +81,7 @@ export default function QuickViewModal({ product, isOpen, onClose }) {
                   <button
                     key={idx}
                     onClick={() => setSelectedImage(img)}
-                    className={`w-14 h-14 rounded-lg overflow-hidden border-2 transition ${selectedImage === img ? 'border-emerald-600' : 'border-slate-200 dark:border-emerald-900 opacity-60 hover:opacity-100'}`}
+                    className={`w-14 h-14 rounded-lg overflow-hidden border-2 transition ${selectedImage === img ? 'border-orange-600' : 'border-slate-200 dark:border-slate-800 opacity-60 hover:opacity-100'}`}
                   >
                     <img src={img} alt="" className="w-full h-full object-cover" />
                   </button>
@@ -94,25 +94,25 @@ export default function QuickViewModal({ product, isOpen, onClose }) {
           <div className="p-6 md:p-8 flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+                <span className="text-xs font-bold uppercase tracking-wider text-orange-700 dark:text-orange-400">
                   {product.brand || product.categoryName}
                 </span>
                 <span>•</span>
-                <div className="flex items-center gap-1 text-emerald-700 dark:text-emerald-400 text-xs font-bold">
-                  <Star className="w-3.5 h-3.5 fill-emerald-600 text-emerald-600" />
+                <div className="flex items-center gap-1 text-orange-700 dark:text-orange-400 text-xs font-bold">
+                  <Star className="w-3.5 h-3.5 fill-orange-600 text-orange-600" />
                   <span>{product.rating || 5.0}</span>
                 </div>
               </div>
 
               <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{product.name}</h2>
-              <p className="text-xs text-slate-600 dark:text-emerald-200/70 leading-relaxed line-clamp-3 mb-4">
+              <p className="text-xs text-slate-600 dark:text-slate-200/70 leading-relaxed line-clamp-3 mb-4">
                 {product.description}
               </p>
 
               <div className="flex items-baseline gap-3 mb-4">
                 <span className="text-2xl font-black text-slate-900 dark:text-white">{formatCurrency(price)}</span>
                 {product.originalPrice && product.originalPrice > price && (
-                  <span className="text-sm text-slate-400 dark:text-emerald-400/60 line-through">
+                  <span className="text-sm text-slate-400 dark:text-slate-400/60 line-through">
                     {formatCurrency(product.originalPrice)}
                   </span>
                 )}
@@ -120,7 +120,7 @@ export default function QuickViewModal({ product, isOpen, onClose }) {
 
               {product.variants && product.variants.length > 0 && (
                 <div className="mb-4">
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-emerald-200 mb-2">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-200 mb-2">
                     Options:
                   </label>
                   <div className="flex flex-wrap gap-2">
@@ -128,7 +128,7 @@ export default function QuickViewModal({ product, isOpen, onClose }) {
                       <button
                         key={v.id}
                         onClick={() => setSelectedVariant(v)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition ${selectedVariant?.id === v.id ? 'bg-emerald-600 border-emerald-600 text-white' : 'bg-slate-50 dark:bg-emerald-950 border-slate-200 dark:border-emerald-800 text-slate-700 dark:text-emerald-200'}`}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition ${selectedVariant?.id === v.id ? 'bg-orange-600 border-orange-600 text-white' : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200'}`}
                       >
                         {v.name}
                       </button>
@@ -138,11 +138,11 @@ export default function QuickViewModal({ product, isOpen, onClose }) {
               )}
             </div>
 
-            <div className="space-y-3 pt-4 border-t border-slate-100 dark:border-emerald-900/60">
+            <div className="space-y-3 pt-4 border-t border-slate-100 dark:border-slate-800/60">
               <div className="flex gap-2">
                 <button
                   onClick={handleAction}
-                  className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 shadow-xs transition"
+                  className="flex-1 py-3 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 shadow-xs transition"
                 >
                   {isAuthenticated ? (
                     <>
@@ -156,7 +156,7 @@ export default function QuickViewModal({ product, isOpen, onClose }) {
                 </button>
                 <button
                   onClick={() => toggleWishlist(product)}
-                  className={`p-3 rounded-xl border transition ${inWishlist ? 'bg-rose-600 text-white border-rose-600' : 'bg-white dark:bg-emerald-950 border-slate-200 dark:border-emerald-800 text-slate-500 dark:text-emerald-200'}`}
+                  className={`p-3 rounded-xl border transition ${inWishlist ? 'bg-rose-600 text-white border-rose-600' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-200'}`}
                 >
                   <Heart className={`w-4 h-4 ${inWishlist ? 'fill-white' : ''}`} />
                 </button>
@@ -165,7 +165,7 @@ export default function QuickViewModal({ product, isOpen, onClose }) {
               <Link
                 href={`/product/${product.slug}`}
                 onClick={onClose}
-                className="w-full py-2 text-center text-xs text-emerald-700 dark:text-emerald-400 font-bold hover:underline flex items-center justify-center gap-1"
+                className="w-full py-2 text-center text-xs text-orange-700 dark:text-orange-400 font-bold hover:underline flex items-center justify-center gap-1"
               >
                 View Full Product Specs <ArrowRight className="w-3.5 h-3.5" />
               </Link>

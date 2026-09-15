@@ -20,7 +20,7 @@ export default function ProductGallery({ images = [], name = '' }) {
   return (
     <div className="space-y-4">
       <div
-        className="relative aspect-square w-full rounded-2xl overflow-hidden bg-slate-50 dark:bg-emerald-950/60 border border-slate-200 dark:border-emerald-900/50 cursor-crosshair group shadow-xs"
+        className="relative aspect-square w-full rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/50 cursor-crosshair group shadow-xs"
         onMouseEnter={() => setIsZoomed(true)}
         onMouseLeave={() => setIsZoomed(false)}
         onMouseMove={handleMouseMove}
@@ -32,7 +32,7 @@ export default function ProductGallery({ images = [], name = '' }) {
           style={isZoomed ? { transformOrigin: `${mousePos.x}% ${mousePos.y}%` } : {}}
         />
 
-        <div className="absolute bottom-4 right-4 bg-emerald-950/80 backdrop-blur-xs px-3 py-1.5 rounded-xl text-[11px] font-bold text-white flex items-center gap-1.5 border border-emerald-700/50 opacity-90 group-hover:opacity-0 transition-opacity">
+        <div className="absolute bottom-4 right-4 bg-slate-900/80 backdrop-blur-xs px-3 py-1.5 rounded-xl text-[11px] font-bold text-white flex items-center gap-1.5 border border-orange-700/50 opacity-90 group-hover:opacity-0 transition-opacity">
           <ZoomIn className="w-3.5 h-3.5" /> Hover to Zoom
         </div>
       </div>
@@ -43,7 +43,7 @@ export default function ProductGallery({ images = [], name = '' }) {
             <button
               key={idx}
               onClick={() => setActiveIndex(idx)}
-              className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 transition-all shrink-0 bg-slate-50 dark:bg-emerald-950 ${activeIndex === idx ? 'border-emerald-600 ring-2 ring-emerald-500/30' : 'border-slate-200 dark:border-emerald-900 opacity-60 hover:opacity-100'}`}
+              className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 transition-all shrink-0 bg-slate-50 dark:bg-slate-900 ${activeIndex === idx ? 'border-orange-600 ring-2 ring-orange-500/30' : 'border-slate-200 dark:border-slate-800 opacity-60 hover:opacity-100'}`}
             >
               <img src={img} alt="" className="w-full h-full object-cover" />
             </button>
