@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import {
-  Headphones,
+  MessageCircle,
   X,
   Send,
   Phone,
@@ -17,7 +17,7 @@ export default function SupportWidget() {
     {
       id: 'm1',
       sender: 'agent',
-      text: 'Hello! Welcome to Cartly Specialist Support. How can we assist with your order, hardware specs, or delivery today?',
+      text: 'Hello! Welcome to Cartly Support. How can we help you today?',
       time: 'Just now',
     },
   ]);
@@ -46,7 +46,7 @@ export default function SupportWidget() {
         {
           id: `a-${Date.now()}`,
           sender: 'agent',
-          text: 'Thank you for reaching out! A Cartly hardware specialist is reviewing your request. For immediate order tracking, you can also view your live manifest in the account dashboard.',
+          text: 'Thank you for reaching out! A support specialist is reviewing your request. You can also track your orders from the account dashboard.',
           time: 'Just now',
         },
       ]);
@@ -55,176 +55,159 @@ export default function SupportWidget() {
 
   return (
     <>
-      {/* Floating Corner Support Button */}
+      {/* Floating Button */}
       <div className="fixed bottom-6 right-6 z-50">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="relative p-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full shadow-xl shadow-emerald-600/30 flex items-center justify-center transition-all hover:scale-105 active:scale-95 border border-emerald-500"
-          title="24/7 Customer Support & Help"
-          aria-label="Open 24/7 Support Desk"
+          className="p-3 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+          title="Support"
+          aria-label="Open Support"
         >
-          {isOpen ? <X className="w-6 h-6" /> : <Headphones className="w-6 h-6" />}
-          {!isOpen && (
-            <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-400 rounded-full border-2 border-white dark:border-[#061e14] animate-pulse" />
-          )}
+          {isOpen ? <X className="w-5 h-5" /> : <MessageCircle className="w-5 h-5" />}
         </button>
       </div>
 
       {/* Support Card */}
       {isOpen && (
-        <div className="fixed bottom-22 right-6 z-50 w-[90vw] max-w-sm bg-white dark:bg-[#09261a] border border-slate-200 dark:border-emerald-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col text-slate-900 dark:text-white max-h-[550px]">
+        <div className="fixed bottom-22 right-6 z-50 w-[90vw] max-w-sm bg-white dark:bg-[#161616] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[520px]">
           {/* Header */}
-          <div className="p-4 bg-emerald-950 text-white flex items-center justify-between border-b border-emerald-900">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold">
-                <Headphones className="w-4 h-4" />
-              </div>
-              <div>
-                <h3 className="font-bold text-sm leading-tight">Cartly Help Desk</h3>
-                <span className="text-[10px] text-emerald-300 font-bold flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  Live Specialists Active
-                </span>
-              </div>
+          <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+            <div>
+              <h3 className="font-semibold text-sm text-slate-900 dark:text-white">Support</h3>
+              <span className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                Online
+              </span>
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="text-emerald-300 hover:text-white p-1 rounded-lg"
+              className="text-slate-400 hover:text-slate-900 dark:hover:text-white p-1 rounded-lg transition"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
-          {/* Navigation Tabs */}
-          <div className="grid grid-cols-3 p-1 bg-slate-100 dark:bg-emerald-950/70 border-b border-slate-200 dark:border-emerald-800 text-[11px] font-bold text-slate-600 dark:text-emerald-200">
+          {/* Tabs */}
+          <div className="grid grid-cols-3 border-b border-slate-100 dark:border-slate-800 text-[11px] font-medium text-slate-500 dark:text-slate-400">
             <button
               onClick={() => setActiveTab('chat')}
-              className={`py-1.5 rounded-lg transition ${activeTab === 'chat' ? 'bg-white dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 shadow-xs' : 'hover:text-slate-900 dark:hover:text-white'}`}
+              className={`py-2.5 transition ${activeTab === 'chat' ? 'text-slate-900 dark:text-white border-b-2 border-slate-900 dark:border-white' : 'hover:text-slate-700 dark:hover:text-slate-300'}`}
             >
-              Live Chat
+              Chat
             </button>
             <button
               onClick={() => setActiveTab('contact')}
-              className={`py-1.5 rounded-lg transition ${activeTab === 'contact' ? 'bg-white dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 shadow-xs' : 'hover:text-slate-900 dark:hover:text-white'}`}
+              className={`py-2.5 transition ${activeTab === 'contact' ? 'text-slate-900 dark:text-white border-b-2 border-slate-900 dark:border-white' : 'hover:text-slate-700 dark:hover:text-slate-300'}`}
             >
-              Contact Us
+              Contact
             </button>
             <button
               onClick={() => setActiveTab('faq')}
-              className={`py-1.5 rounded-lg transition ${activeTab === 'faq' ? 'bg-white dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 shadow-xs' : 'hover:text-slate-900 dark:hover:text-white'}`}
+              className={`py-2.5 transition ${activeTab === 'faq' ? 'text-slate-900 dark:text-white border-b-2 border-slate-900 dark:border-white' : 'hover:text-slate-700 dark:hover:text-slate-300'}`}
             >
-              Quick FAQ
+              FAQ
             </button>
           </div>
 
-          {/* Tab 1: Live Chat */}
+          {/* Chat Tab */}
           {activeTab === 'chat' && (
-            <div className="flex-1 flex flex-col min-h-[290px] justify-between p-3 space-y-3">
-              <div className="flex-1 overflow-y-auto space-y-2.5 max-h-60 pr-1 text-xs">
+            <div className="flex-1 flex flex-col min-h-[280px] justify-between p-3 space-y-3">
+              <div className="flex-1 overflow-y-auto space-y-2 max-h-56 pr-1 text-xs">
                 {messages.map((m) => (
                   <div
                     key={m.id}
                     className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
                     <div
-                      className={`max-w-[85%] p-3 rounded-xl ${
+                      className={`max-w-[85%] p-2.5 rounded-xl ${
                         m.sender === 'user'
-                          ? 'bg-emerald-600 text-white font-medium rounded-br-none'
-                          : 'bg-slate-100 dark:bg-emerald-950 text-slate-800 dark:text-emerald-100 border border-slate-200 dark:border-emerald-800 rounded-bl-none'
+                          ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-br-sm'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-bl-sm'
                       }`}
                     >
                       <p>{m.text}</p>
-                      <span className="text-[9px] opacity-70 block text-right mt-1">{m.time}</span>
+                      <span className="text-[9px] opacity-50 block text-right mt-1">{m.time}</span>
                     </div>
                   </div>
                 ))}
                 {isTyping && (
                   <div className="flex justify-start">
-                    <div className="bg-slate-100 dark:bg-emerald-950 p-2 rounded-xl text-[11px] text-slate-500 animate-pulse">
-                      Specialist is typing...
+                    <div className="bg-slate-100 dark:bg-slate-800 p-2 rounded-xl text-[11px] text-slate-500 animate-pulse">
+                      Typing...
                     </div>
                   </div>
                 )}
               </div>
 
-              {/* Chat Input */}
-              <form onSubmit={handleSendMessage} className="flex gap-2 pt-2 border-t border-slate-100 dark:border-emerald-800/60">
+              <form onSubmit={handleSendMessage} className="flex gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
                 <input
                   type="text"
-                  placeholder="Type your question..."
+                  placeholder="Type a message..."
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
-                  className="flex-1 px-3 py-2 bg-slate-50 dark:bg-emerald-950 border border-slate-200 dark:border-emerald-800 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:border-emerald-600"
+                  className="flex-1 px-3 py-2 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-white focus:outline-none focus:border-slate-400 dark:focus:border-slate-500 transition"
                 />
                 <button
                   type="submit"
                   disabled={!inputText.trim()}
-                  className="p-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-xl transition"
+                  className="p-2 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 disabled:opacity-30 text-white dark:text-slate-900 rounded-lg transition"
                 >
-                  <Send className="w-4 h-4" />
+                  <Send className="w-3.5 h-3.5" />
                 </button>
               </form>
             </div>
           )}
 
-          {/* Tab 2: Contact Options */}
+          {/* Contact Tab */}
           {activeTab === 'contact' && (
             <div className="p-4 space-y-3 text-xs">
-              <div className="p-3 bg-slate-50 dark:bg-emerald-950 rounded-xl border border-slate-200 dark:border-emerald-800 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 flex items-center justify-center shrink-0">
-                  <Phone className="w-4 h-4" />
-                </div>
+              <div className="p-3 rounded-xl border border-slate-100 dark:border-slate-800 flex items-center gap-3">
+                <Phone className="w-4 h-4 text-slate-400 shrink-0" />
                 <div>
-                  <p className="font-bold text-slate-900 dark:text-white">Toll-Free Helpline</p>
-                  <p className="text-slate-500 dark:text-emerald-300/70 font-mono text-[11px]">+91 1800 419 2278</p>
-                  <span className="text-[10px] text-emerald-600 font-bold">Mon - Sun (9 AM - 9 PM)</span>
+                  <p className="font-medium text-slate-900 dark:text-white">Toll-Free Helpline</p>
+                  <p className="text-slate-500 font-mono text-[11px]">+91 1800 419 2278</p>
                 </div>
               </div>
 
-              <div className="p-3 bg-slate-50 dark:bg-emerald-950 rounded-xl border border-slate-200 dark:border-emerald-800 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 flex items-center justify-center shrink-0">
-                  <Mail className="w-4 h-4" />
-                </div>
+              <div className="p-3 rounded-xl border border-slate-100 dark:border-slate-800 flex items-center gap-3">
+                <Mail className="w-4 h-4 text-slate-400 shrink-0" />
                 <div>
-                  <p className="font-bold text-slate-900 dark:text-white">Email Desk</p>
-                  <p className="text-slate-500 dark:text-emerald-300/70 font-mono text-[11px]">support@cartly.com</p>
-                  <span className="text-[10px] text-slate-400">Response within 2 hours</span>
+                  <p className="font-medium text-slate-900 dark:text-white">Email</p>
+                  <p className="text-slate-500 font-mono text-[11px]">support@cartly.com</p>
                 </div>
               </div>
 
-              <div className="p-3 bg-slate-50 dark:bg-emerald-950 rounded-xl border border-slate-200 dark:border-emerald-800 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 flex items-center justify-center shrink-0">
-                  <ShieldCheck className="w-4 h-4" />
-                </div>
+              <div className="p-3 rounded-xl border border-slate-100 dark:border-slate-800 flex items-center gap-3">
+                <ShieldCheck className="w-4 h-4 text-slate-400 shrink-0" />
                 <div>
-                  <p className="font-bold text-slate-900 dark:text-white">Warranty & Returns</p>
-                  <p className="text-slate-500 dark:text-emerald-300/70 text-[11px]">7-day hassle-free replacements</p>
+                  <p className="font-medium text-slate-900 dark:text-white">Warranty & Returns</p>
+                  <p className="text-slate-500 text-[11px]">7-day hassle-free replacements</p>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Tab 3: FAQ */}
+          {/* FAQ Tab */}
           {activeTab === 'faq' && (
-            <div className="p-4 space-y-2.5 overflow-y-auto max-h-72 text-xs">
-              <div className="p-2.5 bg-slate-50 dark:bg-emerald-950 rounded-xl border border-slate-200 dark:border-emerald-800">
-                <p className="font-bold text-slate-900 dark:text-white">How do I track my order?</p>
-                <p className="text-slate-500 dark:text-emerald-300/70 text-[11px] mt-1">
-                  Once signed in, click your account icon and select "Live Tracking" to view real-time courier status and AWB tracking.
+            <div className="p-4 space-y-2 overflow-y-auto max-h-72 text-xs">
+              <div className="p-3 rounded-xl border border-slate-100 dark:border-slate-800">
+                <p className="font-medium text-slate-900 dark:text-white">How do I track my order?</p>
+                <p className="text-slate-500 text-[11px] mt-1">
+                  Sign in and go to your account dashboard to view real-time order tracking.
                 </p>
               </div>
 
-              <div className="p-2.5 bg-slate-50 dark:bg-emerald-950 rounded-xl border border-slate-200 dark:border-emerald-800">
-                <p className="font-bold text-slate-900 dark:text-white">What payment methods are supported?</p>
-                <p className="text-slate-500 dark:text-emerald-300/70 text-[11px] mt-1">
-                  We accept UPI (Google Pay, PhonePe, Paytm), credit/debit cards, and NetBanking via Razorpay.
+              <div className="p-3 rounded-xl border border-slate-100 dark:border-slate-800">
+                <p className="font-medium text-slate-900 dark:text-white">What payment methods are supported?</p>
+                <p className="text-slate-500 text-[11px] mt-1">
+                  We accept UPI, credit/debit cards, and NetBanking via Razorpay.
                 </p>
               </div>
 
-              <div className="p-2.5 bg-slate-50 dark:bg-emerald-950 rounded-xl border border-slate-200 dark:border-emerald-800">
-                <p className="font-bold text-slate-900 dark:text-white">How does member-only purchasing work?</p>
-                <p className="text-slate-500 dark:text-emerald-300/70 text-[11px] mt-1">
-                  Simply register or sign in to your customer account to unlock member prices, apply promo codes, and complete checkout.
+              <div className="p-3 rounded-xl border border-slate-100 dark:border-slate-800">
+                <p className="font-medium text-slate-900 dark:text-white">How does member-only purchasing work?</p>
+                <p className="text-slate-500 text-[11px] mt-1">
+                  Register or sign in to unlock pricing, apply promos, and checkout.
                 </p>
               </div>
             </div>

@@ -38,9 +38,9 @@ export default function ProductCard({ product, onQuickView }) {
   };
 
   return (
-    <div className="group relative bg-white dark:bg-[#09261a] border border-slate-200 dark:border-emerald-900/50 hover:border-emerald-500 dark:hover:border-emerald-500 rounded-2xl overflow-hidden shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between">
-      {/* Image & Badges Container */}
-      <div className="relative aspect-square w-full overflow-hidden bg-slate-50 dark:bg-emerald-950/40">
+    <div className="group relative bg-white dark:bg-[#161616] border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 rounded-xl overflow-hidden transition-all duration-200 flex flex-col justify-between hover:shadow-md">
+      {/* Image */}
+      <div className="relative aspect-square w-full overflow-hidden bg-slate-50 dark:bg-[#1a1a1a]">
         <Link href={`/product/${product.slug}`} className="block w-full h-full">
           <img
             src={product.images?.[0] || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80'}
@@ -49,40 +49,40 @@ export default function ProductCard({ product, onQuickView }) {
           />
         </Link>
 
-        {/* Top Badges */}
-        <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10 pointer-events-none">
+        {/* Badges */}
+        <div className="absolute top-2.5 left-2.5 flex flex-col gap-1 z-10 pointer-events-none">
           {discountPercent > 0 && (
-            <span className="px-2.5 py-0.5 bg-emerald-600 text-white font-bold text-[10px] rounded-md uppercase shadow-xs">
+            <span className="px-2 py-0.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-semibold text-[10px] rounded-md">
               {discountPercent}% OFF
             </span>
           )}
           {product.isTrending && (
-            <span className="px-2.5 py-0.5 bg-emerald-900/90 text-emerald-100 border border-emerald-700 text-[10px] font-bold rounded-md uppercase shadow-xs flex items-center gap-1">
-              <Zap className="w-3 h-3 fill-emerald-300 text-emerald-300" /> Trending
+            <span className="px-2 py-0.5 bg-slate-900/80 dark:bg-white/90 text-white dark:text-slate-900 text-[10px] font-medium rounded-md flex items-center gap-1">
+              <Zap className="w-2.5 h-2.5" /> Trending
             </span>
           )}
         </div>
 
-        {/* Wishlist Button */}
+        {/* Wishlist */}
         <button
           onClick={handleToggleWishlist}
           aria-label="Wishlist"
-          className={`absolute top-3 right-3 p-2.5 rounded-xl transition-all shadow-xs z-10 active:scale-90 ${
+          className={`absolute top-2.5 right-2.5 p-2 rounded-lg transition-all z-10 active:scale-90 ${
             inWishlist
-              ? 'bg-rose-600 text-white'
-              : 'bg-white/90 dark:bg-emerald-950/80 text-slate-500 dark:text-emerald-200 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-white'
+              ? 'bg-red-500 text-white'
+              : 'bg-white/90 dark:bg-slate-900/80 text-slate-500 dark:text-slate-300 hover:text-red-500'
           }`}
           title={inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
         >
           <Heart className={`w-4 h-4 ${inWishlist ? 'fill-white' : ''}`} />
         </button>
 
-        {/* Quick View Button on Hover */}
+        {/* Quick View */}
         {onQuickView && (
           <div className="absolute inset-x-3 bottom-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
             <button
               onClick={() => onQuickView(product)}
-              className="w-full py-2 bg-emerald-900/90 hover:bg-emerald-900 text-white border border-emerald-700/60 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition shadow-lg backdrop-blur-xs"
+              className="w-full py-2 bg-white/95 dark:bg-slate-900/95 text-slate-900 dark:text-white text-xs font-medium rounded-lg flex items-center justify-center gap-1.5 transition shadow-sm backdrop-blur-sm"
             >
               <Eye className="w-3.5 h-3.5" /> Quick View
             </button>
@@ -90,61 +90,60 @@ export default function ProductCard({ product, onQuickView }) {
         )}
       </div>
 
-      {/* Product Content Details */}
-      <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3">
+      {/* Content */}
+      <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
         <div>
-          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-emerald-300/70 mb-1">
-            <span className="font-bold uppercase tracking-wider text-[10px] text-emerald-700 dark:text-emerald-400 truncate max-w-[140px]">
-              {product.brand || product.categoryName || 'Cartly Verified'}
+          <div className="flex items-center justify-between text-xs mb-1.5">
+            <span className="font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[10px] truncate max-w-[140px]">
+              {product.brand || product.categoryName || 'Cartly'}
             </span>
-            <div className="flex items-center gap-1 bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 font-bold text-[11px] shrink-0">
-              <Star className="w-3 h-3 fill-emerald-600 text-emerald-600" />
-              <span>{product.rating || 5.0}</span>
-              <span className="text-slate-400 dark:text-emerald-400/60 font-normal">({product.reviewsCount || 0})</span>
+            <div className="flex items-center gap-1 text-slate-500 dark:text-slate-400 text-[11px] shrink-0">
+              <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+              <span className="font-medium">{product.rating || 5.0}</span>
+              <span className="text-slate-300 dark:text-slate-600">({product.reviewsCount || 0})</span>
             </div>
           </div>
 
           <Link href={`/product/${product.slug}`} className="block">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 line-clamp-1 transition">
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-white hover:text-slate-600 dark:hover:text-slate-300 line-clamp-1 transition">
               {product.name}
             </h3>
           </Link>
-          <p className="text-xs text-slate-500 dark:text-emerald-200/70 line-clamp-2 mt-1 leading-relaxed">
+          <p className="text-xs text-slate-500 dark:text-slate-500 line-clamp-2 mt-1 leading-relaxed">
             {product.description}
           </p>
         </div>
 
-        {/* Pricing & Add to Cart Button */}
-        <div className="pt-3 border-t border-slate-100 dark:border-emerald-900/40 space-y-3">
+        {/* Pricing & CTA */}
+        <div className="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2.5">
           <div className="flex items-baseline justify-between">
             <div className="flex items-baseline gap-2">
-              <span className="text-lg font-black text-slate-900 dark:text-white">
+              <span className="text-lg font-bold text-slate-900 dark:text-white">
                 {formatCurrency(product.price)}
               </span>
               {product.originalPrice && product.originalPrice > product.price && (
-                <span className="text-xs text-slate-400 dark:text-emerald-400/60 line-through">
+                <span className="text-xs text-slate-400 line-through">
                   {formatCurrency(product.originalPrice)}
                 </span>
               )}
             </div>
-            <span className="text-[10px] text-emerald-700 dark:text-emerald-300 font-bold bg-emerald-50 dark:bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
+            <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
               Free Delivery
             </span>
           </div>
 
-          {/* Green Add to Cart Button */}
           {isAuthenticated ? (
             <button
               onClick={handleAddToCart}
-              className={`w-full py-2.5 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-xs active:scale-98 ${
+              className={`w-full py-2.5 px-4 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-2 active:scale-[0.98] ${
                 inCart
-                  ? 'bg-emerald-700 text-white ring-2 ring-emerald-400/40'
-                  : 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                  ? 'bg-emerald-600 text-white'
+                  : 'bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900'
               }`}
             >
               {inCart ? (
                 <>
-                  <Check className="w-4 h-4" /> Added to Cart ({cartItem.quantity})
+                  <Check className="w-4 h-4" /> In Cart ({cartItem.quantity})
                 </>
               ) : (
                 <>
@@ -155,7 +154,7 @@ export default function ProductCard({ product, onQuickView }) {
           ) : (
             <Link
               href="/auth/login?role=customer"
-              className="w-full py-2.5 px-4 rounded-xl bg-slate-100 dark:bg-emerald-950 hover:bg-emerald-600 hover:text-white text-slate-800 dark:text-emerald-200 text-xs font-bold border border-slate-200 dark:border-emerald-800 flex items-center justify-center gap-1.5 transition shadow-xs"
+              className="w-full py-2.5 px-4 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-900 text-slate-700 dark:text-slate-200 text-xs font-medium flex items-center justify-center gap-1.5 transition"
             >
               <Lock className="w-3.5 h-3.5" /> Sign In to Buy
             </Link>
