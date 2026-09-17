@@ -81,6 +81,19 @@ export default function CheckoutPage() {
     return `CRT-${dateStr}-${randomNum}`;
   };
 
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      if (typeof window === 'undefined') return resolve(false);
+      if (window.Razorpay) return resolve(true);
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.async = true;
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
   const handlePlaceOrder = async (e) => {
     e.preventDefault();
     if (items.length === 0) {
@@ -119,6 +132,7 @@ export default function CheckoutPage() {
         couponCode: coupon?.code || '',
         shippingCost,
         totalAmount: finalTotal,
+        paymentGateway: 'razorpay',
         items: items.map((i) => ({
           productId: i.productId,
           productName: i.name,
@@ -133,28 +147,90 @@ export default function CheckoutPage() {
         })),
       };
 
-      const verifyRes = await fetch('/api/checkout/verify-payment', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          razorpay_order_id: paymentData.order.id,
-          razorpay_payment_id: `pay_${Math.random().toString(36).substring(2, 14)}`,
-          razorpay_signature: 'simulated_valid_signature',
-          orderDetails: orderPayload,
-        }),
-      });
+      const isRazorpayLoaded = await loadRazorpayScript();
+      const isRealKey =
+        paymentData.keyId &&
+        paymentData.keyId.startsWith('rzp_') &&
+        !paymentData.keyId.includes('demo');
 
-      const verifyData = await verifyRes.json();
-      if (!verifyData.success) {
-        throw new Error(verifyData.error || 'Payment verification failed');
+      if (isRazorpayLoaded && window.Razorpay && isRealKey) {
+        // Open Official Live / Test Razorpay Checkout Popup
+        const options = {
+          key: paymentData.keyId,
+          amount: paymentData.order.amount,
+          currency: paymentData.order.currency || 'INR',
+          name: 'Cartly Store',
+          description: `Payment for Order #${generatedOrderNum}`,
+          image: '/logo.png',
+          order_id: paymentData.order.id,
+          handler: async function (response) {
+            try {
+              const verifyRes = await fetch('/api/checkout/verify-payment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                  orderDetails: orderPayload,
+                }),
+              });
+              const verifyData = await verifyRes.json();
+              if (!verifyData.success) {
+                throw new Error(verifyData.error || 'Payment signature verification failed');
+              }
+              clearCart();
+              router.push(`/order-success?orderId=${generatedOrderNum}`);
+            } catch (err) {
+              setErrorMsg(err.message || 'Payment verification failed');
+              setProcessing(false);
+            }
+          },
+          prefill: {
+            name: formData.fullName,
+            email: formData.email,
+            contact: formData.phone,
+          },
+          theme: {
+            color: '#ea580c', // Cartly orange
+          },
+          modal: {
+            ondismiss: function () {
+              setProcessing(false);
+            },
+          },
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.on('payment.failed', function (response) {
+          setErrorMsg(response.error?.description || 'Payment was declined or cancelled. Please try again.');
+          setProcessing(false);
+        });
+        rzp.open();
+      } else {
+        // Safe simulation fallback for test mode without real keys
+        const verifyRes = await fetch('/api/checkout/verify-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            razorpay_order_id: paymentData.order.id,
+            razorpay_payment_id: `pay_${Math.random().toString(36).substring(2, 14)}`,
+            razorpay_signature: 'simulated_valid_signature',
+            orderDetails: orderPayload,
+          }),
+        });
+
+        const verifyData = await verifyRes.json();
+        if (!verifyData.success) {
+          throw new Error(verifyData.error || 'Payment verification failed');
+        }
+
+        clearCart();
+        router.push(`/order-success?orderId=${generatedOrderNum}`);
       }
-
-      clearCart();
-      router.push(`/order-success?orderId=${generatedOrderNum}`);
     } catch (err) {
       console.error(err);
       setErrorMsg(err.message || 'An error occurred during payment processing');
-    } finally {
       setProcessing(false);
     }
   };
