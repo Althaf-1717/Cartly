@@ -15,6 +15,7 @@ import {
   Headphones,
   Award,
   Zap,
+  Sparkles,
 } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import AnnouncementBar from '@/components/layout/AnnouncementBar';
