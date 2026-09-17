@@ -36,20 +36,20 @@ export default function RevenueChart() {
   const data = timeframe === 'week' ? weeklyData : monthlyData;
 
   return (
-    <div className="bg-[#111111] border border-slate-800/80 p-6 rounded-2xl shadow-md space-y-6">
+    <div className="bg-white dark:bg-[#111111] border border-slate-200 dark:border-slate-800/80 p-6 rounded-2xl shadow-xs space-y-6 transition-colors duration-200">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h3 className="font-bold text-white text-base">Commerce Sales Velocity</h3>
-          <p className="text-xs text-slate-400 mt-0.5">Real-time payment order completions</p>
+          <h3 className="font-bold text-slate-900 dark:text-white text-base">Commerce Sales Velocity</h3>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Real-time payment order completions</p>
         </div>
 
-        <div className="flex gap-1 bg-slate-900/80 p-1 rounded-xl border border-slate-800 self-start">
+        <div className="flex gap-1 bg-slate-100 dark:bg-slate-900/80 p-1 rounded-xl border border-slate-200 dark:border-slate-800 self-start">
           <button
             onClick={() => setTimeframe('week')}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
               timeframe === 'week'
-                ? 'bg-orange-600 text-white font-black shadow-sm'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-orange-600 text-white font-black shadow-xs'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             Last 7 Days
@@ -58,8 +58,8 @@ export default function RevenueChart() {
             onClick={() => setTimeframe('month')}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
               timeframe === 'month'
-                ? 'bg-orange-600 text-white font-black shadow-sm'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-orange-600 text-white font-black shadow-xs'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             Last 6 Months
@@ -76,7 +76,7 @@ export default function RevenueChart() {
                 <stop offset="95%" stopColor="#ea580c" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" className="dark:stroke-slate-800" />
             <XAxis dataKey="name" stroke="#64748b" fontSize={12} tickLine={false} />
             <YAxis
               stroke="#64748b"
@@ -88,12 +88,12 @@ export default function RevenueChart() {
               content={({ active, payload, label }) => {
                 if (active && payload && payload.length) {
                   return (
-                    <div className="bg-[#0a0a0a] border border-slate-700 p-3 rounded-xl shadow-2xl text-xs text-white">
-                      <p className="font-bold text-white mb-1">{label}</p>
-                      <p className="text-orange-400 font-bold">
+                    <div className="bg-white dark:bg-[#0a0a0a] border border-slate-200 dark:border-slate-700 p-3 rounded-xl shadow-xl text-xs text-slate-900 dark:text-white">
+                      <p className="font-bold mb-1">{label}</p>
+                      <p className="text-orange-600 dark:text-orange-400 font-bold">
                         Revenue: {formatCurrency(payload[0].value)}
                       </p>
-                      <p className="text-slate-400 mt-0.5">
+                      <p className="text-slate-500 dark:text-slate-400 mt-0.5">
                         Orders: {payload[0].payload.orders}
                       </p>
                     </div>

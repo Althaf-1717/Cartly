@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { StoreService } from '@/lib/db/storeService';
 
 const AuthContext = createContext();
 
@@ -42,7 +43,14 @@ export function AuthProvider({ children }) {
     try {
       const stored = localStorage.getItem('cartly_auth_user');
       if (stored) {
-        setUser(JSON.parse(stored));
+        const parsed = JSON.parse(stored);
+        if (StoreService.isUserTerminated(parsed.email)) {
+          // If stored user was terminated by admin, revoke session immediately
+          localStorage.removeItem('cartly_auth_user');
+          setUser(null);
+        } else {
+          setUser(parsed);
+        }
       } else {
         setUser(null);
       }
@@ -55,6 +63,15 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password, role = 'customer') => {
     setLoading(true);
+
+    // Check if user has been permanently terminated by admin
+    if (StoreService.isUserTerminated(email)) {
+      setLoading(false);
+      const errorMsg = 'You are terminated. Please contact admin.';
+      alert(errorMsg);
+      throw new Error(errorMsg);
+    }
+
     let loggedUser;
 
     if (role === 'admin' || email?.includes('admin')) {
@@ -64,10 +81,18 @@ export function AuthProvider({ children }) {
         role: 'admin',
       };
     } else {
+      // Find matching customer details if available
+      const customers = await StoreService.getCustomers();
+      const existing = customers.find((c) => c.email?.toLowerCase() === email?.toLowerCase());
+
       loggedUser = {
-        ...DEMO_ACCOUNTS.customer,
+        id: existing?.id || `cust-${Date.now()}`,
         email: email || DEMO_ACCOUNTS.customer.email,
+        fullName: existing?.name || (email ? email.split('@')[0] : DEMO_ACCOUNTS.customer.fullName),
         role: 'customer',
+        avatar: existing?.avatar || DEMO_ACCOUNTS.customer.avatar,
+        phone: existing?.phone || DEMO_ACCOUNTS.customer.phone,
+        address: existing?.address || DEMO_ACCOUNTS.customer.address,
       };
     }
 
@@ -78,7 +103,6 @@ export function AuthProvider({ children }) {
     if (loggedUser.role === 'admin') {
       router.push('/admin');
     } else {
-      // After login, client directly sees the products catalog!
       router.push('/catalog');
     }
     return loggedUser;
@@ -86,6 +110,14 @@ export function AuthProvider({ children }) {
 
   const signup = async (userData, role = 'customer') => {
     setLoading(true);
+
+    if (StoreService.isUserTerminated(userData.email)) {
+      setLoading(false);
+      const errorMsg = 'You are terminated. Please contact admin.';
+      alert(errorMsg);
+      throw new Error(errorMsg);
+    }
+
     const newUser = {
       id: `user-${Date.now()}`,
       email: userData.email,
@@ -98,6 +130,16 @@ export function AuthProvider({ children }) {
       address: userData.address || null,
     };
 
+    // Also register in customer directory
+    if (role === 'customer') {
+      await StoreService.addCustomer({
+        name: newUser.fullName,
+        email: newUser.email,
+        phone: newUser.phone,
+        avatar: newUser.avatar,
+      });
+    }
+
     setUser(newUser);
     localStorage.setItem('cartly_auth_user', JSON.stringify(newUser));
     setLoading(false);
@@ -105,7 +147,6 @@ export function AuthProvider({ children }) {
     if (role === 'admin') {
       router.push('/admin');
     } else {
-      // After signup, client directly sees the products catalog!
       router.push('/catalog');
     }
     return newUser;

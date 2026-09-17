@@ -14,7 +14,10 @@ import {
   MessageSquare,
   ShieldAlert,
   ArrowLeft,
+  Sun,
+  Moon,
 } from 'lucide-react';
+import { useTheme } from '@/lib/context/ThemeContext';
 
 const navItems = [
   { name: 'Executive Overview', href: '/admin', icon: LayoutDashboard },
@@ -30,19 +33,20 @@ const navItems = [
 
 export default function AdminSidebar() {
   const pathname = usePathname();
+  const { theme, toggleTheme, isDark } = useTheme();
 
   return (
-    <aside className="w-64 bg-[#0a0a0a] border-r border-slate-800/80 flex flex-col justify-between shrink-0 min-h-screen text-slate-300">
+    <aside className="w-64 bg-slate-50 dark:bg-[#0a0a0a] border-r border-slate-200 dark:border-slate-800/80 flex flex-col justify-between shrink-0 min-h-screen text-slate-700 dark:text-slate-300 transition-colors duration-200">
       <div>
         {/* Header with Cartly Logo */}
-        <div className="p-6 border-b border-slate-800/80 flex items-center justify-between">
+        <div className="p-6 border-b border-slate-200 dark:border-slate-800/80 flex items-center justify-between">
           <Link href="/admin" className="flex items-center gap-3">
             <img
               src="/logo.png"
               alt="Cartly"
               className="h-7 w-auto object-contain dark:brightness-0 dark:invert"
             />
-            <span className="text-[10px] bg-orange-600/20 text-orange-400 border border-orange-500/30 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
+            <span className="text-[10px] bg-orange-600/10 dark:bg-orange-600/20 text-orange-600 dark:text-orange-400 border border-orange-500/30 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
               Admin
             </span>
           </Link>
@@ -60,10 +64,10 @@ export default function AdminSidebar() {
                 className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold transition ${
                   isActive
                     ? 'bg-orange-600 text-white font-black shadow-md shadow-orange-600/20'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-900/60'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-900/60'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-500 dark:text-slate-400'}`} />
                 <span>{item.name}</span>
               </Link>
             );
@@ -71,11 +75,24 @@ export default function AdminSidebar() {
         </nav>
       </div>
 
-      {/* Return to storefront */}
-      <div className="p-4 border-t border-slate-800/80 bg-[#070707]">
+      {/* Footer Controls: Theme Toggle & Return to storefront */}
+      <div className="p-4 border-t border-slate-200 dark:border-slate-800/80 bg-slate-100/70 dark:bg-[#070707] space-y-2">
+        <button
+          onClick={toggleTheme}
+          className="w-full flex items-center justify-between py-2 px-3 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-850 border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-700 dark:text-slate-300 transition"
+        >
+          <span className="flex items-center gap-2">
+            {isDark ? <Moon className="w-3.5 h-3.5 text-orange-400" /> : <Sun className="w-3.5 h-3.5 text-orange-500" />}
+            <span>Theme Mode</span>
+          </span>
+          <span className="text-[10px] uppercase font-bold text-orange-600 dark:text-orange-400">
+            {isDark ? 'Night' : 'Light'}
+          </span>
+        </button>
+
         <Link
           href="/"
-          className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-bold text-slate-200 hover:text-white transition"
+          className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-800 dark:text-slate-200 transition"
         >
           <ArrowLeft className="w-4 h-4 text-orange-500" /> Back to Storefront
         </Link>

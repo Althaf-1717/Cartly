@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { ShoppingBag, ArrowRight, ShieldCheck, UserCheck, ShieldAlert, Check } from 'lucide-react';
+import { ShoppingBag, ArrowRight, ShieldCheck, UserCheck, ShieldAlert, Check, AlertOctagon } from 'lucide-react';
 import { useAuth } from '@/lib/auth/authContext';
 
 export default function LoginPage() {
@@ -16,39 +16,73 @@ export default function LoginPage() {
   const [adminPassword, setAdminPassword] = useState('');
 
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleCustomerLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-    await login(custEmail, custPassword, 'customer');
+    setErrorMessage('');
+    try {
+      await login(custEmail, custPassword, 'customer');
+    } catch (err) {
+      setErrorMessage(err.message || 'Login failed. Please check credentials.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleAdminLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-    await login(adminEmail, adminPassword, 'admin');
+    setErrorMessage('');
+    try {
+      await login(adminEmail, adminPassword, 'admin');
+    } catch (err) {
+      setErrorMessage(err.message || 'Admin authentication failed.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-white dark:bg-[#0a0a0a] flex flex-col items-center justify-center p-4 text-slate-900 dark:text-slate-50 transition-colors duration-200">
-      <div className="w-full max-w-md bg-white dark:bg-[#111111] border border-slate-200 dark:border-slate-800/50 rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
+      <div className="w-full max-w-md bg-white dark:bg-[#111111] border border-slate-200 dark:border-slate-800/80 rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
         {/* Brand Header */}
         <div className="text-center space-y-2">
           <Link href="/" className="inline-flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-orange-600 text-white flex items-center justify-center shadow-md shadow-orange-600/20 font-bold">
-              <ShoppingBag className="w-5 h-5" />
-            </div>
-            <span className="text-xl font-mono font-bold tracking-tight text-slate-900 dark:text-white">CARTLY</span>
+            <img
+              src="/logo.png"
+              alt="Cartly"
+              className="h-8 w-auto object-contain dark:brightness-0 dark:invert mx-auto"
+            />
           </Link>
           <h2 className="text-xl font-bold text-slate-900 dark:text-white">Sign In to Cartly</h2>
-          <p className="text-xs text-slate-500 dark:text-slate-300/70">Choose your account type to proceed</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">Choose your account type to proceed</p>
         </div>
+
+        {/* Terminated / Error Banner */}
+        {errorMessage && (
+          <div className="p-3.5 bg-red-500/10 border border-red-500/30 rounded-xl text-xs text-red-600 dark:text-red-400 flex items-start gap-2.5">
+            <AlertOctagon className="w-4 h-4 shrink-0 mt-0.5" />
+            <div>
+              <p className="font-bold">{errorMessage}</p>
+              {errorMessage.toLowerCase().includes('terminated') && (
+                <p className="text-[11px] text-red-500/80 mt-1">
+                  Your account has been terminated by the administrator. Access is permanently revoked.
+                </p>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Tab Switcher */}
         <div className="grid grid-cols-2 gap-1.5 p-1 bg-slate-100 dark:bg-slate-900/80 rounded-xl border border-slate-200 dark:border-slate-800">
           <button
             type="button"
-            onClick={() => setActiveTab('customer')}
+            onClick={() => {
+              setActiveTab('customer');
+              setErrorMessage('');
+            }}
             className={`py-2 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 ${
               activeTab === 'customer'
                 ? 'bg-orange-600 text-white shadow-xs'
@@ -59,7 +93,10 @@ export default function LoginPage() {
           </button>
           <button
             type="button"
-            onClick={() => setActiveTab('admin')}
+            onClick={() => {
+              setActiveTab('admin');
+              setErrorMessage('');
+            }}
             className={`py-2 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 ${
               activeTab === 'admin'
                 ? 'bg-orange-600 text-white shadow-xs'
