@@ -22,18 +22,26 @@ export function CartProvider({ children }) {
       if (stored) {
         setItems(JSON.parse(stored));
       } else {
-        // Initial sample item for preview
         const initial = [
           {
             id: 'prod-1-default',
-            productId: 'prod-1',
-            name: 'Aether Pro ANC Wireless Headphones',
-            price: 24999,
-            originalPrice: 29999,
+            productId: 'prod-m-shirt-1',
+            name: 'Men’s Classic Oxford Pure Linen Shirt',
+            brand: 'Urban Linen',
+            price: 2499,
+            originalPrice: 3499,
             quantity: 1,
-            image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80',
-            variantName: 'Midnight Obsidian',
-            sku: 'AETH-NC900-BLK',
+            size: 'M',
+            image: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=800&q=80',
+            images: [
+              'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=800&q=80',
+              'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=800&q=80',
+              'https://images.unsplash.com/photo-1621072156002-e2fccdc0b176?w=800&q=80',
+              'https://images.unsplash.com/photo-1598033129183-c4f50c736f10?w=800&q=80',
+              'https://images.unsplash.com/photo-1589310243389-96a5483213a8?w=800&q=80',
+            ],
+            variantName: 'Size M / Crisp White',
+            sku: 'LIN-OXF-001-WHT',
           }
         ];
         setItems(initial);
@@ -56,8 +64,9 @@ export function CartProvider({ children }) {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  const addToCart = (product, variant = null, quantity = 1) => {
-    const itemKey = `${product.id}-${variant?.sku || variant?.name || 'default'}`;
+  const addToCart = (product, variant = null, quantity = 1, selectedSize = null) => {
+    const sizeVal = selectedSize || variant?.size || product.size || (product.category === 'clothes' ? 'M' : product.category === 'shoes' ? 'UK 9' : 'Standard');
+    const itemKey = `${product.id}-${variant?.sku || variant?.name || sizeVal || 'default'}`;
     const existingIndex = items.findIndex((i) => i.id === itemKey);
 
     let updated;
@@ -73,11 +82,14 @@ export function CartProvider({ children }) {
         productId: product.id,
         name: product.name,
         slug: product.slug,
+        brand: product.brand || 'Cartly Collection',
         price: variant?.price || product.price,
         originalPrice: product.originalPrice,
         quantity,
+        size: sizeVal,
         image: product.images?.[0] || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80',
-        variantName: variant?.name || 'Standard Edition',
+        images: Array.isArray(product.images) && product.images.length > 0 ? product.images : [product.images?.[0] || ''],
+        variantName: variant?.name || `Size ${sizeVal}`,
         sku: variant?.sku || product.sku,
       };
       updated = [...items, newItem];
@@ -111,17 +123,14 @@ export function CartProvider({ children }) {
 
   const applyCoupon = async (code) => {
     setCouponError('');
-    if (!code || !code.trim()) {
-      setCouponError('Please enter a coupon code');
-      return false;
-    }
-    const res = await StoreService.validateCoupon(code, subtotal);
-    if (res.valid) {
-      setCoupon(res);
-      showToast(`Promo "${res.code}" applied: Saved ₹${res.discountAmount}`);
+    const currentSubtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    const result = await StoreService.validateCoupon(code, currentSubtotal);
+    if (result.valid) {
+      setCoupon(result);
+      showToast(`Coupon "${result.code}" applied!`);
       return true;
     } else {
-      setCouponError(res.message || 'Invalid coupon code');
+      setCouponError(result.message);
       return false;
     }
   };
@@ -129,35 +138,18 @@ export function CartProvider({ children }) {
   const removeCoupon = () => {
     setCoupon(null);
     setCouponError('');
-    showToast('Promo code removed');
   };
 
-  // Calculations
-  const itemCount = items.reduce((sum, i) => sum + i.quantity, 0);
-  const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
-  const originalSubtotal = items.reduce(
-    (sum, i) => sum + (i.originalPrice || i.price) * i.quantity,
-    0
-  );
-  const totalSavings = Math.max(0, originalSubtotal - subtotal) + (coupon?.discountAmount || 0);
-  const shippingCost = subtotal >= FREE_SHIPPING_THRESHOLD || items.length === 0 ? 0 : STANDARD_SHIPPING_FEE;
+  const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const discountAmount = coupon ? coupon.discountAmount : 0;
+  const shippingCost = subtotal > 0 && subtotal < FREE_SHIPPING_THRESHOLD ? STANDARD_SHIPPING_FEE : 0;
   const finalTotal = Math.max(0, subtotal - discountAmount + shippingCost);
-  const freeShippingRemaining = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
 
   return (
     <CartContext.Provider
       value={{
         items,
-        itemCount,
-        subtotal,
-        originalSubtotal,
-        totalSavings,
-        shippingCost,
-        discountAmount,
-        finalTotal,
-        freeShippingRemaining,
-        FREE_SHIPPING_THRESHOLD,
         isDrawerOpen,
         setIsDrawerOpen,
         addToCart,
@@ -169,7 +161,13 @@ export function CartProvider({ children }) {
         applyCoupon,
         removeCoupon,
         toastMessage,
-        showToast,
+        setToastMessage,
+        itemCount,
+        subtotal,
+        discountAmount,
+        shippingCost,
+        finalTotal,
+        FREE_SHIPPING_THRESHOLD,
       }}
     >
       {children}
