@@ -64,9 +64,9 @@ export default function SettingsPage() {
   const [activeModal, setActiveModal] = useState(null);
 
   // Profile data
-  const [fullName, setFullName] = useState(user?.fullName || 'Aarav Sharma');
-  const [email, setEmail] = useState(user?.email || 'aarav.sharma@example.com');
-  const [phone, setPhone] = useState(user?.phone || '+91 98765 43210');
+  const [fullName, setFullName] = useState(user?.fullName || '');
+  const [email, setEmail] = useState(user?.email || '');
+  const [phone, setPhone] = useState(user?.phone || '');
 
   // Selected language
   const [selectedLang, setSelectedLang] = useState('en');
@@ -83,24 +83,21 @@ export default function SettingsPage() {
   const [addresses, setAddresses] = useState([]);
   const [addressForm, setAddressForm] = useState({
     country: 'India',
-    fullName: user?.fullName || 'Aarav Sharma',
-    phone: user?.phone || '+91 98765 43210',
-    flatBuilding: 'Flat 402, Skyline Residency, Tower B',
-    areaStreet: '100ft Road, Indiranagar',
-    landmark: 'Near Metro Station',
-    pincode: '560038',
-    townCity: 'Bengaluru',
-    state: 'Karnataka',
+    fullName: user?.fullName || '',
+    phone: user?.phone || '',
+    flatBuilding: '',
+    areaStreet: '',
+    landmark: '',
+    pincode: '',
+    townCity: '',
+    state: 'Andhra Pradesh',
     isDefault: true,
   });
   const [isAddingNewAddress, setIsAddingNewAddress] = useState(false);
 
   // Saved Cards / Payment methods
-  const [savedCards, setSavedCards] = useState([
-    { id: 'c1', type: 'HDFC Bank Visa Platinum', last4: '4242', expiry: '08/28', isDefault: true },
-    { id: 'c2', type: 'ICICI Bank RuPay Credit', last4: '8819', expiry: '11/29', isDefault: false },
-  ]);
-  const [savedUPI, setSavedUPI] = useState(['aarav.sharma@okhdfcbank', '9876543210@paytm']);
+  const [savedCards, setSavedCards] = useState([]);
+  const [savedUPI, setSavedUPI] = useState([]);
 
   // Coupons data
   const [coupons, setCoupons] = useState([]);
@@ -115,9 +112,9 @@ export default function SettingsPage() {
     StoreService.getCoupons().then(setCoupons);
 
     if (user) {
-      setFullName(user.fullName || 'Aarav Sharma');
-      setEmail(user.email || 'aarav.sharma@example.com');
-      setPhone(user.phone || '+91 98765 43210');
+      setFullName(user.fullName || '');
+      setEmail(user.email || '');
+      setPhone(user.phone || '');
     }
 
     // Load saved addresses from localStorage
@@ -126,23 +123,7 @@ export default function SettingsPage() {
       if (storedAddrs) {
         setAddresses(JSON.parse(storedAddrs));
       } else {
-        const initial = [
-          {
-            id: 'addr-1',
-            country: 'India',
-            fullName: user?.fullName || 'Aarav Sharma',
-            phone: user?.phone || '+91 98765 43210',
-            flatBuilding: 'Flat 402, Skyline Residency, Tower B',
-            areaStreet: '100ft Road, Indiranagar',
-            landmark: 'Near Metro Station',
-            pincode: '560038',
-            townCity: 'Bengaluru',
-            state: 'Karnataka',
-            isDefault: true,
-          }
-        ];
-        setAddresses(initial);
-        localStorage.setItem('cartly_saved_addresses_v1', JSON.stringify(initial));
+        setAddresses([]);
       }
     } catch (e) {}
   }, [user]);

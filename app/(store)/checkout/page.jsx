@@ -47,14 +47,14 @@ export default function CheckoutPage() {
   } = useCart();
 
   const [formData, setFormData] = useState({
-    fullName: user?.fullName || 'Aarav Sharma',
-    email: user?.email || 'aarav.sharma@example.com',
-    phone: user?.phone || '+91 98765 43210',
-    flatBuilding: user?.address?.street || 'Flat 402, Skyline Residency, Indiranagar',
-    street: user?.address?.street || '100ft Road, Indiranagar',
-    city: user?.address?.city || 'Bengaluru',
-    state: user?.address?.state || 'Karnataka',
-    postalCode: user?.address?.postalCode || '560038',
+    fullName: user?.fullName || '',
+    email: user?.email || '',
+    phone: user?.phone || '',
+    flatBuilding: user?.address?.street || '',
+    street: user?.address?.street || '',
+    city: user?.address?.city || '',
+    state: user?.address?.state || 'Andhra Pradesh',
+    postalCode: user?.address?.postalCode || '',
     country: 'India',
   });
 

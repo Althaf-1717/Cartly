@@ -57,12 +57,11 @@ npm run start
 
 ---
 
-## 🔑 Demo Credentials
-
-| Role | Email | Password | Access |
-| :--- | :--- | :--- | :--- |
-| **Admin** | `admin@cartly.com` | `admin` | Full Admin Console & Storefront |
-| **Customer** | `aarav.sharma@example.com` | `password` | Shopping, Checkout, Order Tracking |
+## 🔑 Admin Access
+- **Email:** `althafshaik1717@gmail.com`
+- **Password:** `Althaf@7727`
+- **Phone:** `9398870585`
+- **Role:** Administrator (full access to `/admin` console and management features)
 
 ---
 

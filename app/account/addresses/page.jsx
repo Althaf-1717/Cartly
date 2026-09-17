@@ -24,14 +24,14 @@ export default function AddressesPage() {
 
   const [form, setForm] = useState({
     country: 'India',
-    fullName: user?.fullName || 'Aarav Sharma',
-    phone: user?.phone || '+91 98765 43210',
+    fullName: user?.fullName || '',
+    phone: user?.phone || '',
     flatBuilding: '',
     areaStreet: '',
     landmark: '',
     pincode: '',
     townCity: '',
-    state: 'Karnataka',
+    state: 'Andhra Pradesh',
     isDefault: false,
   });
 
@@ -41,23 +41,7 @@ export default function AddressesPage() {
       if (stored) {
         setAddresses(JSON.parse(stored));
       } else {
-        const initial = [
-          {
-            id: 'addr-1',
-            country: 'India',
-            fullName: user?.fullName || 'Aarav Sharma',
-            phone: user?.phone || '+91 98765 43210',
-            flatBuilding: 'Flat 402, Skyline Residency, Tower B',
-            areaStreet: '100ft Road, Indiranagar',
-            landmark: 'Near Metro Station',
-            pincode: '560038',
-            townCity: 'Bengaluru',
-            state: 'Karnataka',
-            isDefault: true,
-          }
-        ];
-        setAddresses(initial);
-        localStorage.setItem('cartly_saved_addresses_v1', JSON.stringify(initial));
+        setAddresses([]);
       }
     } catch (e) {}
   }, [user]);

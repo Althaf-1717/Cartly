@@ -26,8 +26,8 @@ function LoginForm() {
   const [custEmail, setCustEmail] = useState('');
   const [custPassword, setCustPassword] = useState('');
 
-  const [adminEmail, setAdminEmail] = useState('');
-  const [adminPassword, setAdminPassword] = useState('');
+  const [adminEmail, setAdminEmail] = useState('althafshaik1717@gmail.com');
+  const [adminPassword, setAdminPassword] = useState('Althaf@7727');
 
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -130,25 +130,6 @@ function LoginForm() {
       {/* CUSTOMER LOGIN FORM */}
       {activeTab === 'customer' && (
         <div className="space-y-4">
-          <div className="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-800/60 text-xs">
-            <span className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
-              Demo Customer Credential:
-            </span>
-            <div className="flex justify-between items-center text-[11px] text-slate-500 dark:text-slate-400">
-              <span>aarav.sharma@example.com</span>
-              <button
-                type="button"
-                onClick={() => {
-                  setCustEmail('aarav.sharma@example.com');
-                  setCustPassword('password123');
-                }}
-                className="text-orange-600 dark:text-orange-400 font-bold hover:underline"
-              >
-                Auto-Fill
-              </button>
-            </div>
-          </div>
-
           <form onSubmit={handleCustomerLogin} className="space-y-3 text-xs">
             <div>
               <label className="block text-slate-700 dark:text-slate-200 font-semibold mb-1">
@@ -157,7 +138,7 @@ function LoginForm() {
               <input
                 type="email"
                 required
-                placeholder="Enter registered email"
+                placeholder="name@example.com"
                 value={custEmail}
                 onChange={(e) => setCustEmail(e.target.value)}
                 className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-orange-600 font-medium"
@@ -171,7 +152,7 @@ function LoginForm() {
               <input
                 type="password"
                 required
-                placeholder="Enter password"
+                placeholder="Enter your password"
                 value={custPassword}
                 onChange={(e) => setCustPassword(e.target.value)}
                 className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-orange-600 font-medium"
@@ -195,15 +176,15 @@ function LoginForm() {
         <div className="space-y-4">
           <div className="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-800/60 text-xs">
             <span className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
-              Demo Admin Credential:
+              Admin Direct Access:
             </span>
             <div className="flex justify-between items-center text-[11px] text-slate-500 dark:text-slate-400">
-              <span>admin@cartly.com</span>
+              <span className="font-mono">althafshaik1717@gmail.com</span>
               <button
                 type="button"
                 onClick={() => {
-                  setAdminEmail('admin@cartly.com');
-                  setAdminPassword('admin123');
+                  setAdminEmail('althafshaik1717@gmail.com');
+                  setAdminPassword('Althaf@7727');
                 }}
                 className="text-orange-600 dark:text-orange-400 font-bold hover:underline"
               >
@@ -220,7 +201,7 @@ function LoginForm() {
               <input
                 type="email"
                 required
-                placeholder="admin@cartly.com"
+                placeholder="althafshaik1717@gmail.com"
                 value={adminEmail}
                 onChange={(e) => setAdminEmail(e.target.value)}
                 className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-orange-600 font-medium"

@@ -6,32 +6,13 @@ import { StoreService } from '@/lib/db/storeService';
 
 const AuthContext = createContext();
 
-const DEMO_ACCOUNTS = {
-  admin: {
-    id: 'user-admin-01',
-    email: 'admin@cartly.com',
-    fullName: 'Store Administrator',
-    role: 'admin',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&q=80',
-    phone: '+91 99000 11223'
-  },
-  customer: {
-    id: 'user-cust-01',
-    email: 'aarav.sharma@example.com',
-    fullName: 'Aarav Sharma',
-    role: 'customer',
-    avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&q=80',
-    phone: '+91 98765 43210',
-    address: {
-      fullName: 'Aarav Sharma',
-      street: 'Flat 402, Skyline Residency, Indiranagar',
-      city: 'Bengaluru',
-      state: 'Karnataka',
-      postalCode: '560038',
-      phone: '+91 98765 43210',
-      country: 'India'
-    }
-  }
+const ADMIN_ACCOUNT = {
+  id: 'admin-althaf-1717',
+  email: 'althafshaik1717@gmail.com',
+  fullName: 'Shaik Althaf',
+  role: 'admin',
+  avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&q=80',
+  phone: '9398870585',
 };
 
 export function AuthProvider({ children }) {
@@ -45,7 +26,6 @@ export function AuthProvider({ children }) {
       if (stored) {
         const parsed = JSON.parse(stored);
         if (StoreService.isUserTerminated(parsed.email)) {
-          // If stored user was terminated by admin, revoke session immediately
           localStorage.removeItem('cartly_auth_user');
           setUser(null);
         } else {
@@ -61,11 +41,13 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  const login = async (email, password, role = 'customer') => {
+  const login = async (email, password, role = 'customer', redirectUrl = null) => {
     setLoading(true);
 
+    const cleanEmail = (email || '').trim().toLowerCase();
+
     // Check if user has been permanently terminated by admin
-    if (StoreService.isUserTerminated(email)) {
+    if (StoreService.isUserTerminated(cleanEmail)) {
       setLoading(false);
       const errorMsg = 'You are terminated. Please contact admin.';
       alert(errorMsg);
@@ -74,25 +56,35 @@ export function AuthProvider({ children }) {
 
     let loggedUser;
 
-    if (role === 'admin' || email?.includes('admin')) {
-      loggedUser = {
-        ...DEMO_ACCOUNTS.admin,
-        email: email || DEMO_ACCOUNTS.admin.email,
-        role: 'admin',
-      };
+    if (role === 'admin' || cleanEmail === 'althafshaik1717@gmail.com') {
+      if (cleanEmail === 'althafshaik1717@gmail.com') {
+        if (password !== 'Althaf@7727') {
+          setLoading(false);
+          throw new Error('Incorrect admin access key. Please enter the valid admin password.');
+        }
+        loggedUser = { ...ADMIN_ACCOUNT };
+      } else {
+        setLoading(false);
+        throw new Error('Access denied. Only authorized administrator can sign in.');
+      }
     } else {
-      // Find matching customer details if available
+      // Customer authentication
+      if (!cleanEmail) {
+        setLoading(false);
+        throw new Error('Please enter a valid customer email address.');
+      }
+
       const customers = await StoreService.getCustomers();
-      const existing = customers.find((c) => c.email?.toLowerCase() === email?.toLowerCase());
+      const existing = customers.find((c) => c.email?.toLowerCase() === cleanEmail);
 
       loggedUser = {
         id: existing?.id || `cust-${Date.now()}`,
-        email: email || DEMO_ACCOUNTS.customer.email,
-        fullName: existing?.name || (email ? email.split('@')[0] : DEMO_ACCOUNTS.customer.fullName),
+        email: cleanEmail,
+        fullName: existing?.name || cleanEmail.split('@')[0],
         role: 'customer',
-        avatar: existing?.avatar || DEMO_ACCOUNTS.customer.avatar,
-        phone: existing?.phone || DEMO_ACCOUNTS.customer.phone,
-        address: existing?.address || DEMO_ACCOUNTS.customer.address,
+        avatar: existing?.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&q=80',
+        phone: existing?.phone || '',
+        address: existing?.address || null,
       };
     }
 
@@ -113,7 +105,9 @@ export function AuthProvider({ children }) {
   const signup = async (userData, role = 'customer', redirectUrl = null) => {
     setLoading(true);
 
-    if (StoreService.isUserTerminated(userData.email)) {
+    const cleanEmail = (userData.email || '').trim().toLowerCase();
+
+    if (StoreService.isUserTerminated(cleanEmail)) {
       setLoading(false);
       const errorMsg = 'You are terminated. Please contact admin.';
       alert(errorMsg);
@@ -121,18 +115,17 @@ export function AuthProvider({ children }) {
     }
 
     const newUser = {
-      id: `user-${Date.now()}`,
-      email: userData.email,
-      fullName: userData.fullName || (role === 'admin' ? 'Store Administrator' : 'Customer Shopper'),
+      id: role === 'admin' ? ADMIN_ACCOUNT.id : `user-${Date.now()}`,
+      email: cleanEmail,
+      fullName: userData.fullName || (role === 'admin' ? ADMIN_ACCOUNT.fullName : 'Customer'),
       role: role,
       avatar: role === 'admin' 
-        ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&q=80'
+        ? ADMIN_ACCOUNT.avatar
         : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&q=80',
       phone: userData.phone || '',
       address: userData.address || null,
     };
 
-    // Also register in customer directory
     if (role === 'customer') {
       await StoreService.addCustomer({
         name: newUser.fullName,
@@ -157,13 +150,10 @@ export function AuthProvider({ children }) {
   };
 
   const switchRole = (targetRole) => {
-    const target = targetRole === 'admin' ? DEMO_ACCOUNTS.admin : DEMO_ACCOUNTS.customer;
-    setUser(target);
-    localStorage.setItem('cartly_auth_user', JSON.stringify(target));
     if (targetRole === 'admin') {
+      setUser(ADMIN_ACCOUNT);
+      localStorage.setItem('cartly_auth_user', JSON.stringify(ADMIN_ACCOUNT));
       router.push('/admin');
-    } else {
-      router.push('/catalog');
     }
   };
 

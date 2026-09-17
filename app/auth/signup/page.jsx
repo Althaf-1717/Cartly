@@ -98,7 +98,7 @@ function SignupForm() {
           <input
             type="email"
             required
-            placeholder="aarav.sharma@example.com"
+            placeholder="name@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-orange-600 font-medium"
