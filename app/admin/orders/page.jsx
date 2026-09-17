@@ -23,6 +23,7 @@ import AdminHeader from '@/components/admin/AdminHeader';
 import { StoreService } from '@/lib/db/storeService';
 import { formatCurrency, formatDate, formatDateTime } from '@/lib/utils/formatters';
 import OrderProductModal from '@/components/orders/OrderProductModal';
+import { subscribeToOrders } from '@/lib/db/supabaseRealtime';
 
 // 4 Exact Stages requested: processing (default) -> confirmed -> shipping -> arrived
 const ORDER_STAGES = [
@@ -93,6 +94,12 @@ export default function AdminOrdersPage() {
 
   useEffect(() => {
     loadOrders();
+    const unsubscribe = subscribeToOrders(() => {
+      loadOrders();
+    });
+    return () => {
+      if (typeof unsubscribe === 'function') unsubscribe();
+    };
   }, []);
 
   // Filter orders by active vs completed

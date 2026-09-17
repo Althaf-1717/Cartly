@@ -24,6 +24,7 @@ import AnnouncementBar from '@/components/layout/AnnouncementBar';
 import { StoreService } from '@/lib/db/storeService';
 import { formatCurrency, formatDateTime } from '@/lib/utils/formatters';
 import OrderProductModal from '@/components/orders/OrderProductModal';
+import { subscribeToOrderById } from '@/lib/db/supabaseRealtime';
 
 // 4 Exact Stages: 1. Processing (default) -> 2. Order Confirmed -> 3. Shipping -> 4. Order Arrived
 const STATUS_STEPS = [
@@ -98,6 +99,13 @@ export default function OrderDetailsPage({ params: paramsPromise }) {
       }
     }, 2500);
 
+    // Live Supabase Realtime WebSocket subscription
+    const unsubscribeRealtime = subscribeToOrderById(params.id, () => {
+      if (isMounted && params.id) {
+        fetchOrderData(params.id);
+      }
+    });
+
     // Also listen to storage events across different browser tabs
     const handleStorageChange = () => {
       if (isMounted && params.id) {
@@ -109,6 +117,7 @@ export default function OrderDetailsPage({ params: paramsPromise }) {
     return () => {
       isMounted = false;
       clearInterval(pollInterval);
+      if (typeof unsubscribeRealtime === 'function') unsubscribeRealtime();
       window.removeEventListener('storage', handleStorageChange);
     };
   }, [params.id]);
