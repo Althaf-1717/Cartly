@@ -81,3 +81,252 @@
 .animate-heart-pop {
   animation: heartPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
+
+/* ==========================================================================
+   Bootstrap-Compatible Carousel, Pagination & Custom Tooltip Styles
+   ========================================================================== */
+.carousel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.5rem;
+}
+
+.carousel-inner {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 1.5rem;
+}
+
+.carousel-item {
+  position: relative;
+  display: none;
+  width: 100%;
+  margin-right: -100%;
+  backface-visibility: hidden;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease;
+}
+
+.carousel-item.active {
+  display: block;
+}
+
+.carousel-indicators {
+  position: absolute;
+  right: 0;
+  bottom: 1.25rem;
+  left: 0;
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  padding: 0;
+  margin-right: 15%;
+  margin-left: 15%;
+  gap: 0.5rem;
+  list-style: none;
+}
+
+.carousel-indicators [data-bs-target] {
+  box-sizing: content-box;
+  flex: 0 1 auto;
+  width: 2rem;
+  height: 0.35rem;
+  padding: 0;
+  text-indent: -999px;
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.5);
+  background-clip: padding-box;
+  border: 0;
+  border-radius: 9999px;
+  opacity: 0.7;
+  transition: opacity 0.3s ease, width 0.3s ease, background-color 0.3s ease;
+}
+
+.carousel-indicators .active {
+  width: 3.5rem;
+  opacity: 1;
+  background-color: #ea580c;
+  box-shadow: 0 0 12px rgba(234, 88, 12, 0.8);
+}
+
+.carousel-caption {
+  position: absolute;
+  right: 8%;
+  bottom: 3.5rem;
+  left: 8%;
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+  color: #fff;
+  text-align: left;
+  z-index: 10;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 12%;
+  padding: 0;
+  color: #fff;
+  text-align: center;
+  background: none;
+  border: 0;
+  opacity: 0.85;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  cursor: pointer;
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+  opacity: 1;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+  transition: all 0.25s ease;
+}
+
+.carousel-control-prev:hover .carousel-control-prev-icon,
+.carousel-control-next:hover .carousel-control-next-icon {
+  background: #ea580c;
+  border-color: #ea580c;
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(234, 88, 12, 0.4);
+}
+
+/* Pagination component */
+.pagination {
+  display: flex;
+  padding-left: 0;
+  list-style: none;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.page-item .page-link {
+  position: relative;
+  display: block;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #64748b;
+  text-decoration: none;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.dark .page-item .page-link {
+  color: #94a3b8;
+  background-color: #111111;
+  border-color: #1e293b;
+}
+
+.page-item .page-link:hover {
+  color: #ea580c;
+  border-color: #ea580c;
+  background-color: #fff7ed;
+}
+
+.dark .page-item .page-link:hover {
+  color: #fb923c;
+  border-color: #ea580c;
+  background-color: #1c1917;
+}
+
+.page-item.active .page-link {
+  z-index: 3;
+  color: #ffffff !important;
+  background-color: #ea580c !important;
+  border-color: #ea580c !important;
+  box-shadow: 0 2px 10px rgba(234, 88, 12, 0.35);
+}
+
+.page-item.disabled .page-link {
+  color: #cbd5e1;
+  pointer-events: none;
+  background-color: #f8fafc;
+  border-color: #f1f5f9;
+}
+
+.dark .page-item.disabled .page-link {
+  color: #475569;
+  background-color: #0f172a;
+  border-color: #1e293b;
+}
+
+/* Custom Tooltip Themed via CSS Variables */
+:root {
+  --bs-tooltip-bg: #0f172a;
+  --bs-tooltip-color: #ffffff;
+  --bs-tooltip-padding-x: 0.75rem;
+  --bs-tooltip-padding-y: 0.4rem;
+  --bs-tooltip-font-size: 0.75rem;
+  --bs-tooltip-border-radius: 0.625rem;
+  --bs-tooltip-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+.dark {
+  --bs-tooltip-bg: #ea580c;
+  --bs-tooltip-color: #ffffff;
+}
+
+.custom-tooltip-wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+.custom-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background-color: var(--bs-tooltip-bg);
+  color: var(--bs-tooltip-color);
+  padding: var(--bs-tooltip-padding-y) var(--bs-tooltip-padding-x);
+  font-size: var(--bs-tooltip-font-size);
+  font-weight: 600;
+  border-radius: var(--bs-tooltip-border-radius);
+  box-shadow: var(--bs-tooltip-shadow);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+  z-index: 100;
+}
+
+.custom-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: var(--bs-tooltip-bg) transparent transparent transparent;
+}
+
+.custom-tooltip-wrapper:hover .custom-tooltip,
+.has-tooltip:hover .custom-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+

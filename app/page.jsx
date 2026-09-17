@@ -19,13 +19,14 @@ import {
 import Navbar from '@/components/layout/Navbar';
 import AnnouncementBar from '@/components/layout/AnnouncementBar';
 import Footer from '@/components/layout/Footer';
+import CategoryCarousel from '@/components/home/CategoryCarousel';
 import { StoreService } from '@/lib/db/storeService';
 import { useAuth } from '@/lib/auth/authContext';
 
 export default function HomePage() {
   const [categories, setCategories] = useState([]);
   const [banners, setBanners] = useState([]);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   useEffect(() => {
     StoreService.getCategories().then(setCategories);
@@ -103,8 +104,8 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* 2. MEMBER NOTICE */}
-        {!isAuthenticated && (
+        {/* 2. MEMBER NOTICE OR LOGGED IN GREETING */}
+        {!isAuthenticated ? (
           <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-slate-800 rounded-xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-4 text-left">
@@ -132,9 +133,39 @@ export default function HomePage() {
               </div>
             </div>
           </section>
+        ) : (
+          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="bg-gradient-to-r from-orange-500/10 via-orange-500/5 to-transparent border border-orange-500/20 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-orange-600 text-white flex items-center justify-center font-bold shadow-md shadow-orange-600/30 shrink-0">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-900 dark:text-white text-sm">
+                    Welcome back, {user?.fullName || 'Valued Member'}!
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    Your session is active. Explore our newly restocked Men’s & Women’s apparel, shoes and gadgets below.
+                  </p>
+                </div>
+              </div>
+              <Link
+                href="/catalog"
+                className="px-4 py-2 bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5 shrink-0"
+              >
+                <span>Browse All Products</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </section>
         )}
 
-        {/* 3. CATEGORIES */}
+        {/* 3. CAROUSEL EFFECT (BEFORE CATEGORY) */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <CategoryCarousel />
+        </section>
+
+        {/* 4. CATEGORIES */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           <div className="flex items-end justify-between">
             <div>

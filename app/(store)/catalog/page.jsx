@@ -3,7 +3,7 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   Search,
   Lock,
@@ -23,15 +23,20 @@ import {
   Scissors,
   Layers,
   Package,
+  Heart,
+  ShieldCheck,
+  User,
+  Users,
 } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import AnnouncementBar from '@/components/layout/AnnouncementBar';
 import ProductCard from '@/components/product/ProductCard';
 import QuickViewModal from '@/components/product/QuickViewModal';
+import CategoryCarousel from '@/components/home/CategoryCarousel';
 import { StoreService } from '@/lib/db/storeService';
 import { useAuth } from '@/lib/auth/authContext';
 
-// Icon mapper helper
+// Icon helper
 const getCategoryIcon = (iconName, className = 'w-6 h-6') => {
   switch (iconName) {
     case 'Shirt':
@@ -52,6 +57,14 @@ const getCategoryIcon = (iconName, className = 'w-6 h-6') => {
       return <Scissors className={className} />;
     case 'Smile':
       return <Smile className={className} />;
+    case 'Sparkles':
+      return <Sparkles className={className} />;
+    case 'Heart':
+      return <Heart className={className} />;
+    case 'Layers':
+      return <Layers className={className} />;
+    case 'ShieldCheck':
+      return <ShieldCheck className={className} />;
     default:
       return <Package className={className} />;
   }
@@ -62,10 +75,11 @@ function CatalogContent() {
   const router = useRouter();
 
   const urlCategory = searchParams.get('category') || '';
+  const urlGender = searchParams.get('gender') || '';
   const urlSubcategory = searchParams.get('subcategory') || '';
   const urlSearch = searchParams.get('search') || '';
 
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
@@ -74,14 +88,20 @@ function CatalogContent() {
 
   // Drilldown states:
   // selectedCategory: null | 'clothes' | 'shoes' | 'electronics'
-  // selectedSubcategory: null | 'shirts' | 'pants' | 'laptop' | ...
+  // selectedGender: null | 'male' | 'female'
+  // selectedSubcategory: null | 'shirts' | 'pants' | 't-shirts' | 'shorts' | 'bunnies' | 'underwears' | 'dresses' | 'bras' | ...
   const [selectedCategory, setSelectedCategory] = useState(urlCategory);
+  const [selectedGender, setSelectedGender] = useState(urlGender);
   const [selectedSubcategory, setSelectedSubcategory] = useState(urlSubcategory);
   const [selectedBrand, setSelectedBrand] = useState('');
   const [inStockOnly, setInStockOnly] = useState(false);
   const [searchQuery, setSearchQuery] = useState(urlSearch);
   const [sortBy, setSortBy] = useState('newest');
   const [quickViewProduct, setQuickViewProduct] = useState(null);
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
 
   useEffect(() => {
     StoreService.getCategories().then(setCategories);
@@ -91,20 +111,23 @@ function CatalogContent() {
   // Sync URL query params with state
   useEffect(() => {
     const cat = searchParams.get('category');
+    const gen = searchParams.get('gender');
     const sub = searchParams.get('subcategory');
     const q = searchParams.get('search');
 
     if (cat !== null) setSelectedCategory(cat);
+    if (gen !== null) setSelectedGender(gen);
     if (sub !== null) setSelectedSubcategory(sub);
     if (q !== null) setSearchQuery(q);
   }, [searchParams]);
 
-  // Fetch filtered products
+  // Fetch filtered products with strict subcategory & gender filtering
   useEffect(() => {
     const fetchFiltered = async () => {
       setLoading(true);
       const data = await StoreService.getProducts({
         category: selectedCategory || null,
+        gender: selectedGender || null,
         subcategory: selectedSubcategory || null,
         search: searchQuery,
         sort: sortBy,
@@ -116,19 +139,27 @@ function CatalogContent() {
         final = final.filter((p) => p.brand?.toLowerCase() === selectedBrand.toLowerCase());
       }
       setProducts(final);
+      setCurrentPage(1); // reset pagination when filters change
       setLoading(false);
     };
 
     fetchFiltered();
-  }, [selectedCategory, selectedSubcategory, selectedBrand, inStockOnly, searchQuery, sortBy]);
+  }, [selectedCategory, selectedGender, selectedSubcategory, selectedBrand, inStockOnly, searchQuery, sortBy]);
 
   // Category selection handler (Drills down to Level 2)
   const handleSelectCategory = (catSlug) => {
     setSelectedCategory(catSlug);
+    setSelectedGender('');
     setSelectedSubcategory('');
   };
 
-  // Subcategory selection handler (Drills down to Level 3)
+  // Gender selection handler (Drills down to Male/Female subcategories)
+  const handleSelectGender = (genderSlug) => {
+    setSelectedGender(genderSlug);
+    setSelectedSubcategory('');
+  };
+
+  // Subcategory selection handler (Drills down to Level 3: ONLY products of this subcategory)
   const handleSelectSubcategory = (subSlug) => {
     setSelectedSubcategory(subSlug);
   };
@@ -136,24 +167,39 @@ function CatalogContent() {
   // Reset to Top Level
   const handleResetToMain = () => {
     setSelectedCategory('');
+    setSelectedGender('');
     setSelectedSubcategory('');
     setSelectedBrand('');
     setSearchQuery('');
   };
 
   const currentCategoryObj = categories.find((c) => c.slug === selectedCategory);
-  const currentSubcategoryObj = currentCategoryObj?.subcategories?.find((s) => s.slug === selectedSubcategory);
+  const currentGenderObj = currentCategoryObj?.genders?.find((g) => g.slug === selectedGender);
+
+  // Subcategories to display based on gender or category
+  const availableSubcategories = currentGenderObj?.subcategories || currentCategoryObj?.subcategories || [];
+  const currentSubcategoryObj = availableSubcategories.find((s) => s.slug === selectedSubcategory);
 
   // Determine current view level:
-  // 1. 'main' if no category selected and no search
-  // 2. 'subcategories' if category is selected but no subcategory is selected
-  // 3. 'products' if subcategory is selected OR user is actively searching
+  // 1. 'products' if user clicked a specific subcategory OR is searching
+  // 2. 'gender_select' if clothes is clicked and no gender is chosen yet
+  // 3. 'subcategories' if category is selected & (gender is chosen OR category has no genders)
+  // 4. 'main' if at top level
   const isSearching = Boolean(searchQuery.trim());
-  const viewLevel = isSearching || selectedSubcategory
-    ? 'products'
-    : selectedCategory
-    ? 'subcategories'
-    : 'main';
+  let viewLevel = 'main';
+
+  if (isSearching || selectedSubcategory) {
+    viewLevel = 'products';
+  } else if (selectedCategory === 'clothes' && !selectedGender) {
+    viewLevel = 'gender_select';
+  } else if (selectedCategory) {
+    viewLevel = 'subcategories';
+  }
+
+  // Pagination calculation
+  const totalPages = Math.ceil(products.length / itemsPerPage) || 1;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedProducts = products.slice(startIndex, startIndex + itemsPerPage);
 
   return (
     <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-8">
@@ -179,6 +225,15 @@ function CatalogContent() {
         </div>
       )}
 
+      {/* =========================================================================
+          FEATURED CAROUSEL EFFECT (DISPLAYED BEFORE CATEGORIES)
+          ========================================================================= */}
+      {viewLevel === 'main' && (
+        <section className="space-y-4 animate-in fade-in duration-300">
+          <CategoryCarousel />
+        </section>
+      )}
+
       {/* BREADCRUMB NAVIGATION & DRILL-DOWN HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800/60">
         <div className="flex items-center flex-wrap gap-2 text-xs font-semibold text-slate-500 dark:text-slate-300/70">
@@ -187,17 +242,32 @@ function CatalogContent() {
             className="hover:text-orange-600 dark:hover:text-white transition flex items-center gap-1"
           >
             <Layers className="w-3.5 h-3.5 text-orange-600" />
-            <span>Categories</span>
+            <span>All Categories</span>
           </button>
 
           {selectedCategory && (
             <>
               <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
               <button
+                onClick={() => {
+                  setSelectedGender('');
+                  setSelectedSubcategory('');
+                }}
+                className={`transition ${!selectedGender && !selectedSubcategory ? 'text-orange-700 dark:text-orange-400 font-bold' : 'hover:text-orange-600'}`}
+              >
+                {currentCategoryObj?.name || selectedCategory}
+              </button>
+            </>
+          )}
+
+          {selectedGender && (
+            <>
+              <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+              <button
                 onClick={() => setSelectedSubcategory('')}
                 className={`transition ${!selectedSubcategory ? 'text-orange-700 dark:text-orange-400 font-bold' : 'hover:text-orange-600'}`}
               >
-                {currentCategoryObj?.name || selectedCategory}
+                {currentGenderObj?.name || (selectedGender === 'male' ? 'Men' : 'Women')}
               </button>
             </>
           )}
@@ -222,25 +292,26 @@ function CatalogContent() {
         </div>
 
         {/* Back Buttons for quick navigation */}
-        {viewLevel === 'subcategories' && (
-          <button
-            onClick={handleResetToMain}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-900/80 hover:bg-orange-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-800 transition"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" /> Back to All Categories
-          </button>
-        )}
-
-        {viewLevel === 'products' && (
+        {viewLevel !== 'main' && (
           <div className="flex items-center gap-2">
-            {selectedCategory && (
+            {viewLevel === 'products' && selectedSubcategory && (
               <button
                 onClick={() => setSelectedSubcategory('')}
                 className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-slate-100 dark:bg-slate-900/80 hover:bg-orange-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-800 transition"
               >
-                <ArrowLeft className="w-3.5 h-3.5" /> Back to {currentCategoryObj?.name || 'Subcategories'}
+                <ArrowLeft className="w-3.5 h-3.5" /> Back to Types
               </button>
             )}
+
+            {viewLevel === 'subcategories' && selectedCategory === 'clothes' && selectedGender && (
+              <button
+                onClick={() => setSelectedGender('')}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-slate-100 dark:bg-slate-900/80 hover:bg-orange-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-800 transition"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" /> Back to Men/Women
+              </button>
+            )}
+
             <button
               onClick={handleResetToMain}
               className="text-xs text-slate-500 hover:text-orange-600 dark:hover:text-orange-400 font-bold transition"
@@ -256,17 +327,36 @@ function CatalogContent() {
           ========================================================================= */}
       {viewLevel === 'main' && (
         <section className="space-y-6 animate-in fade-in duration-300">
-          <div className="text-left space-y-1">
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-              Select a Category
-            </h1>
-            <p className="text-xs text-slate-500 dark:text-slate-300/70">
-              Click on any category container below to view its specific types and products
-            </p>
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 text-left">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+                Select a Department
+              </h1>
+              <p className="text-xs text-slate-500 dark:text-slate-300/70">
+                Choose Clothes (with Men & Women collections), Shoes, or Electronics to explore
+              </p>
+            </div>
+
+            {/* Custom Tooltip on Category info */}
+            <div className="custom-tooltip-wrapper">
+              <button
+                type="button"
+                className="btn btn-secondary text-xs font-bold text-slate-500 hover:text-orange-600 dark:hover:text-orange-400 flex items-center gap-1"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                data-bs-custom-class="custom-tooltip"
+                data-bs-title="Click a container to drill down into specific clothing, footwear, or gadget items."
+              >
+                <span>Category Drilldown Active</span>
+              </button>
+              <div className="custom-tooltip">
+                Select a box below to explore specific products!
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {categories.map((cat, idx) => (
+            {categories.map((cat) => (
               <motion.button
                 key={cat.id}
                 onClick={() => handleSelectCategory(cat.slug)}
@@ -275,16 +365,16 @@ function CatalogContent() {
                 transition={{ type: 'spring', stiffness: 350, damping: 25 }}
                 className="group relative bg-white dark:bg-[#111111] border-2 border-slate-200 dark:border-slate-800/60 hover:border-orange-500 dark:hover:border-orange-500 rounded-3xl p-6 text-left shadow-xs hover:shadow-2xl transition-all flex flex-col justify-between overflow-hidden cursor-pointer min-h-[320px]"
               >
-                {/* Background Subtle Tint */}
-                <div className={`absolute top-0 right-0 w-36 h-36 rounded-full blur-3xl opacity-30 pointer-events-none ${cat.slug === 'clothes' ? 'bg-orange-500' : cat.slug === 'shoes' ? 'bg-teal-500' : 'bg-green-500'}`} />
+                {/* Background Subtle Glow */}
+                <div className="absolute top-0 right-0 w-36 h-36 rounded-full blur-3xl opacity-20 pointer-events-none bg-orange-500" />
 
-                {/* Top Section: Icon & Item Count */}
+                {/* Top Section: Icon & Count */}
                 <div className="flex items-center justify-between z-10">
                   <div className="w-14 h-14 rounded-2xl bg-orange-600 text-white flex items-center justify-center shadow-md shadow-orange-600/30 group-hover:scale-110 transition-transform">
                     {getCategoryIcon(cat.icon, 'w-7 h-7')}
                   </div>
                   <span className="px-3 py-1 bg-orange-50 dark:bg-slate-900 border border-orange-200 dark:border-slate-800 text-orange-800 dark:text-slate-300 font-bold text-xs rounded-full">
-                    {cat.itemCount} Products
+                    {cat.itemCount || 10}+ Products
                   </span>
                 </div>
 
@@ -295,10 +385,10 @@ function CatalogContent() {
                     alt={cat.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
-                  <div className="absolute bottom-3 left-3 text-white">
-                    <span className="text-[10px] font-bold uppercase tracking-wider bg-black/40 backdrop-blur-xs px-2 py-0.5 rounded-md">
-                      {cat.subcategories?.map((s) => s.name).join(' • ')}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                  <div className="absolute bottom-3 left-3 right-3 text-white">
+                    <span className="text-[10px] font-bold uppercase tracking-wider bg-black/50 backdrop-blur-xs px-2.5 py-1 rounded-md border border-white/15 inline-block">
+                      {cat.slug === 'clothes' ? 'Men (Shirts, Pants, Tees) • Women (Dresses, Tops, Bras)' : cat.subcategories?.map((s) => s.name).join(' • ')}
                     </span>
                   </div>
                 </div>
@@ -324,40 +414,169 @@ function CatalogContent() {
       )}
 
       {/* =========================================================================
-          LEVEL 2: SUB-CATEGORIES (e.g. Shirts & Pants for Clothes, etc.)
+          LEVEL 2A: GENDER SELECTOR FOR CLOTHES (MEN vs WOMEN)
+          ========================================================================= */}
+      {viewLevel === 'gender_select' && (
+        <section className="space-y-6 animate-in fade-in duration-300">
+          <div className="text-left space-y-1">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-50 dark:bg-slate-900 text-orange-800 dark:text-slate-300 text-xs font-bold rounded-full border border-orange-200 dark:border-slate-800">
+              <Shirt className="w-3.5 h-3.5 text-orange-600" />
+              <span>Clothes Department</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+              Select Men or Women Collection
+            </h1>
+            <p className="text-xs text-slate-500 dark:text-slate-300/70">
+              Choose your category to see specialized items (Shirts, Pants, T-Shirts, Shorts, Banyans & Innerwear for Men; Dresses, Tops, Bras for Women)
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {/* Men / Male Card */}
+            <motion.button
+              onClick={() => handleSelectGender('male')}
+              whileHover={{ y: -6, scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="group relative bg-white dark:bg-[#111111] border-2 border-slate-200 dark:border-slate-800 hover:border-orange-500 rounded-3xl p-8 text-left shadow-md hover:shadow-2xl transition-all overflow-hidden flex flex-col justify-between min-h-[320px]"
+            >
+              <div className="flex items-center justify-between">
+                <div className="w-14 h-14 rounded-2xl bg-orange-600 text-white flex items-center justify-center font-bold shadow-md shadow-orange-600/30">
+                  <User className="w-7 h-7" />
+                </div>
+                <span className="px-3.5 py-1 bg-orange-50 dark:bg-slate-900 text-orange-700 dark:text-orange-400 text-xs font-bold rounded-full border border-orange-200 dark:border-slate-800">
+                  Men’s Collection
+                </span>
+              </div>
+
+              <div className="my-5 w-full h-44 rounded-2xl overflow-hidden bg-slate-900 relative">
+                <img
+                  src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=800&q=80"
+                  alt="Men Collection"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
+                <div className="absolute bottom-3 left-3 right-3 text-white">
+                  <p className="text-xs font-bold text-orange-300">Suggested For Men:</p>
+                  <p className="text-[11px] text-slate-200">
+                    Shirts • Pants • T-Shirts • Shorts • Banyans / Vests • Underwears
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-2xl font-black text-slate-900 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition">
+                    Men’s Wear
+                  </h3>
+                  <span className="text-xs font-bold text-orange-600 dark:text-orange-400 group-hover:translate-x-1 transition-transform">
+                    Explore Men →
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 mt-1">
+                  Oxford linen shirts, tailored chinos, 240 GSM tees, breathable inner banyans & boxer briefs.
+                </p>
+              </div>
+            </motion.button>
+
+            {/* Women / Female Card */}
+            <motion.button
+              onClick={() => handleSelectGender('female')}
+              whileHover={{ y: -6, scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="group relative bg-white dark:bg-[#111111] border-2 border-slate-200 dark:border-slate-800 hover:border-orange-500 rounded-3xl p-8 text-left shadow-md hover:shadow-2xl transition-all overflow-hidden flex flex-col justify-between min-h-[320px]"
+            >
+              <div className="flex items-center justify-between">
+                <div className="w-14 h-14 rounded-2xl bg-orange-600 text-white flex items-center justify-center font-bold shadow-md shadow-orange-600/30">
+                  <Sparkles className="w-7 h-7" />
+                </div>
+                <span className="px-3.5 py-1 bg-orange-50 dark:bg-slate-900 text-orange-700 dark:text-orange-400 text-xs font-bold rounded-full border border-orange-200 dark:border-slate-800">
+                  Women’s Collection
+                </span>
+              </div>
+
+              <div className="my-5 w-full h-44 rounded-2xl overflow-hidden bg-slate-900 relative">
+                <img
+                  src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=800&q=80"
+                  alt="Women Collection"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
+                <div className="absolute bottom-3 left-3 right-3 text-white">
+                  <p className="text-xs font-bold text-orange-300">Suggested For Women:</p>
+                  <p className="text-[11px] text-slate-200">
+                    Dresses • Shirts & Tops • Pants • Shorts • Bras • Underwears
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-2xl font-black text-slate-900 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition">
+                    Women’s Wear
+                  </h3>
+                  <span className="text-xs font-bold text-orange-600 dark:text-orange-400 group-hover:translate-x-1 transition-transform">
+                    Explore Women →
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 mt-1">
+                  Floral midi dresses, mulberry silk blouses, high-waisted wide-leg trousers, wireless bralettes & intimates.
+                </p>
+              </div>
+            </motion.button>
+          </div>
+
+          {/* Quick Option to browse all clothes together */}
+          <div className="p-4 bg-slate-50 dark:bg-slate-900/40 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+            <span className="text-xs font-bold text-slate-700 dark:text-slate-200">
+              Or view all clothes without gender filter:
+            </span>
+            <button
+              onClick={() => setSelectedSubcategory('all')}
+              className="px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold rounded-xl shadow-xs transition hover:opacity-90"
+            >
+              Browse All Clothes
+            </button>
+          </div>
+        </section>
+      )}
+
+      {/* =========================================================================
+          LEVEL 2B: SUBCATEGORIES GRID (Shirts, Pants, T-Shirts, Shorts, Banyans, Bras, etc.)
           ========================================================================= */}
       {viewLevel === 'subcategories' && currentCategoryObj && (
         <section className="space-y-6 animate-in fade-in duration-300">
           <div className="text-left space-y-1">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-50 dark:bg-slate-900 text-orange-800 dark:text-slate-300 text-xs font-bold rounded-full border border-orange-200 dark:border-slate-800">
               {getCategoryIcon(currentCategoryObj.icon, 'w-3.5 h-3.5')}
-              <span>{currentCategoryObj.name} Department</span>
+              <span>
+                {currentCategoryObj.name} {selectedGender ? `• ${selectedGender === 'male' ? 'Men' : 'Women'}` : ''}
+              </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-              Choose {currentCategoryObj.name} Type
+              Choose {selectedGender ? (selectedGender === 'male' ? 'Men’s' : 'Women’s') : currentCategoryObj.name} Type
             </h1>
             <p className="text-xs text-slate-500 dark:text-slate-300/70">
-              Click on any subcategory box to open its products:
+              Click on any item box below — only products of that specific type will be displayed!
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {currentCategoryObj.subcategories?.map((sub) => (
+            {availableSubcategories.map((sub) => (
               <motion.button
                 key={sub.id}
                 onClick={() => handleSelectSubcategory(sub.slug)}
                 whileHover={{ y: -5, scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-                className="group relative bg-white dark:bg-[#111111] border-2 border-slate-200 dark:border-slate-800/60 hover:border-orange-500 dark:hover:border-orange-500 rounded-3xl p-6 text-left shadow-xs hover:shadow-xl transition-all flex flex-col justify-between overflow-hidden cursor-pointer min-h-[280px]"
+                className="group relative bg-white dark:bg-[#111111] border-2 border-slate-200 dark:border-slate-800/60 hover:border-orange-500 dark:hover:border-orange-500 rounded-3xl p-6 text-left shadow-xs hover:shadow-xl transition-all flex flex-col justify-between overflow-hidden cursor-pointer min-h-[290px]"
               >
                 {/* Top Info */}
-                <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center justify-between mb-2">
                   <div className="w-12 h-12 rounded-2xl bg-orange-600 text-white flex items-center justify-center font-bold shadow-md shadow-orange-600/20 group-hover:scale-110 transition-transform">
                     {getCategoryIcon(sub.icon, 'w-6 h-6')}
                   </div>
                   <span className="px-3 py-1 bg-orange-50 dark:bg-slate-900 border border-orange-200 dark:border-slate-800 text-orange-800 dark:text-slate-300 font-bold text-xs rounded-full">
-                    {sub.itemCount} Items
+                    {sub.itemCount || 3}+ Items
                   </span>
                 </div>
 
@@ -368,9 +587,11 @@ function CatalogContent() {
                     alt={sub.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute bottom-2.5 left-3 text-white">
-                    <p className="text-xs font-bold">{sub.name}</p>
+                    <p className="text-xs font-black tracking-wide uppercase bg-black/40 px-2 py-0.5 rounded-md backdrop-blur-xs">
+                      {sub.name}
+                    </p>
                   </div>
                 </div>
 
@@ -380,11 +601,11 @@ function CatalogContent() {
                     <h3 className="text-lg font-black text-slate-900 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition">
                       {sub.name}
                     </h3>
-                    <span className="text-xs font-bold text-orange-700 dark:text-orange-400 group-hover:translate-x-1 transition-transform flex items-center gap-0.5">
-                      Open Items →
+                    <span className="text-xs font-bold text-orange-600 dark:text-orange-400 group-hover:translate-x-1 transition-transform flex items-center gap-0.5">
+                      View Items →
                     </span>
                   </div>
-                  <p className="text-xs text-slate-500 dark:text-slate-300/70">
+                  <p className="text-xs text-slate-500 dark:text-slate-300/70 line-clamp-2">
                     {sub.description}
                   </p>
                 </div>
@@ -395,61 +616,63 @@ function CatalogContent() {
           {/* Quick View All in Category */}
           <div className="p-4 bg-slate-50 dark:bg-slate-900/40 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
             <span className="text-xs font-bold text-slate-700 dark:text-slate-200">
-              Or view all {currentCategoryObj.name} products together:
+              Or view all {selectedGender ? (selectedGender === 'male' ? 'Men’s' : 'Women’s') : currentCategoryObj.name} products:
             </span>
             <button
               onClick={() => setSelectedSubcategory('all')}
               className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl shadow-xs transition"
             >
-              Show All {currentCategoryObj.name} ({products.length})
+              Show All ({products.length})
             </button>
           </div>
         </section>
       )}
 
       {/* =========================================================================
-          LEVEL 3: SPECIFIC PRODUCTS GRID (e.g. ONLY Shirts when Shirts is clicked)
+          LEVEL 3: SPECIFIC PRODUCTS GRID (ONLY PRODUCTS OF THE SELECTED TYPE DISPLAY)
           ========================================================================= */}
       {viewLevel === 'products' && (
         <section className="space-y-6 animate-in fade-in duration-300">
-          {/* Subcategory switcher pills if inside a category */}
+          {/* Subcategory switcher pills */}
           {currentCategoryObj && (
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
-              <span className="text-xs font-bold text-slate-400 dark:text-slate-400/60 uppercase tracking-wider shrink-0 mr-1">
-                {currentCategoryObj.name} Types:
-              </span>
-              <button
-                onClick={() => setSelectedSubcategory('all')}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition shrink-0 ${
-                  selectedSubcategory === 'all' || !selectedSubcategory
-                    ? 'bg-orange-600 text-white shadow-xs'
-                    : 'bg-slate-100 dark:bg-slate-900/60 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-800'
-                }`}
-              >
-                All {currentCategoryObj.name}
-              </button>
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider shrink-0 mr-1">
+                  {selectedGender ? (selectedGender === 'male' ? 'Men’s' : 'Women’s') : currentCategoryObj.name} Types:
+                </span>
+                <button
+                  onClick={() => setSelectedSubcategory('all')}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition shrink-0 ${
+                    selectedSubcategory === 'all' || !selectedSubcategory
+                      ? 'bg-orange-600 text-white shadow-xs'
+                      : 'bg-slate-100 dark:bg-slate-900/60 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-800'
+                  }`}
+                >
+                  All Items
+                </button>
 
-              {currentCategoryObj.subcategories?.map((sub) => {
-                const isActive = selectedSubcategory === sub.slug;
-                return (
-                  <button
-                    key={sub.id}
-                    onClick={() => setSelectedSubcategory(sub.slug)}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 ${
-                      isActive
-                        ? 'bg-orange-600 text-white shadow-xs'
-                        : 'bg-slate-100 dark:bg-slate-900/60 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-800 hover:border-orange-500'
-                    }`}
-                  >
-                    {getCategoryIcon(sub.icon, 'w-3.5 h-3.5')}
-                    <span>{sub.name}</span>
-                  </button>
-                );
-              })}
+                {availableSubcategories.map((sub) => {
+                  const isActive = selectedSubcategory === sub.slug;
+                  return (
+                    <button
+                      key={sub.id}
+                      onClick={() => handleSelectSubcategory(sub.slug)}
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 ${
+                        isActive
+                          ? 'bg-orange-600 text-white shadow-xs'
+                          : 'bg-slate-100 dark:bg-slate-900/60 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-800 hover:border-orange-500'
+                      }`}
+                    >
+                      {getCategoryIcon(sub.icon, 'w-3.5 h-3.5')}
+                      <span>{sub.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           )}
 
-          {/* Filter & Sort Toolbar */}
+          {/* Filter & Sort Toolbar with Custom Tooltip */}
           <div className="bg-white dark:bg-[#111111] border border-slate-200 dark:border-slate-800/50 rounded-2xl p-3.5 sm:p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs">
             {/* Left Active Filters info */}
             <div className="flex flex-wrap items-center gap-2 text-xs">
@@ -457,10 +680,19 @@ function CatalogContent() {
                 {products.length} {products.length === 1 ? 'Item' : 'Items'} Found
               </span>
 
-              {selectedSubcategory && (
+              {selectedSubcategory && selectedSubcategory !== 'all' && (
                 <span className="px-2.5 py-1 bg-orange-50 dark:bg-slate-900 text-orange-800 dark:text-slate-300 border border-orange-200 dark:border-slate-800 font-bold rounded-lg flex items-center gap-1">
                   Type: {currentSubcategoryObj?.name || selectedSubcategory}
                   <button onClick={() => setSelectedSubcategory('')} className="hover:text-black dark:hover:text-white">
+                    ×
+                  </button>
+                </span>
+              )}
+
+              {selectedGender && (
+                <span className="px-2.5 py-1 bg-orange-50 dark:bg-slate-900 text-orange-800 dark:text-slate-300 border border-orange-200 dark:border-slate-800 font-bold rounded-lg flex items-center gap-1">
+                  Gender: {selectedGender === 'male' ? 'Men' : 'Women'}
+                  <button onClick={() => setSelectedGender('')} className="hover:text-black dark:hover:text-white">
                     ×
                   </button>
                 </span>
@@ -513,7 +745,7 @@ function CatalogContent() {
               </button>
 
               <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/60 rounded-xl px-3 py-1.5">
-                <span className="text-slate-400 dark:text-slate-400/60 font-semibold">Sort:</span>
+                <span className="text-slate-400 font-semibold">Sort:</span>
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
@@ -534,15 +766,23 @@ function CatalogContent() {
                 </select>
               </div>
 
-              {(selectedCategory || selectedSubcategory || selectedBrand || inStockOnly || searchQuery) && (
+              {/* Reset filter tooltip button */}
+              <div className="custom-tooltip-wrapper">
                 <button
+                  type="button"
                   onClick={handleResetToMain}
-                  className="p-1.5 text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 transition"
-                  title="Reset all filters"
+                  className="p-2 text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 bg-slate-100 dark:bg-slate-800 rounded-xl transition"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  data-bs-custom-class="custom-tooltip"
+                  data-bs-title="Reset all filters and return to all categories"
                 >
                   <RotateCcw className="w-4 h-4" />
                 </button>
-              )}
+                <div className="custom-tooltip">
+                  Reset all filters
+                </div>
+              </div>
             </div>
           </div>
 
@@ -559,7 +799,7 @@ function CatalogContent() {
               </div>
             ) : products.length === 0 ? (
               <div className="bg-white dark:bg-[#111111] border border-slate-200 dark:border-slate-800/50 rounded-2xl p-12 text-center space-y-4 shadow-xs">
-                <Search className="w-12 h-12 text-slate-400 dark:text-slate-400/60 mx-auto" />
+                <Search className="w-12 h-12 text-slate-400 mx-auto" />
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white">No products found</h3>
                 <p className="text-xs text-slate-500 dark:text-slate-200/70 max-w-sm mx-auto">
                   We couldn't find items in this specific section. Try exploring other types or clearing search filters.
@@ -572,14 +812,79 @@ function CatalogContent() {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {products.map((p) => (
-                  <ProductCard
-                    key={p.id}
-                    product={p}
-                    onQuickView={setQuickViewProduct}
-                  />
-                ))}
+              <div className="space-y-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  {paginatedProducts.map((p) => (
+                    <ProductCard
+                      key={p.id}
+                      product={p}
+                      onQuickView={setQuickViewProduct}
+                    />
+                  ))}
+                </div>
+
+                {/* =========================================================================
+                    PAGINATION COMPONENT (EXACT BOOTSTRAP STRUCTURE REQUESTED BY USER)
+                    ========================================================================= */}
+                {totalPages > 1 && (
+                  <div className="pt-6 pb-2 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div className="text-xs text-slate-500 dark:text-slate-400">
+                      Showing items <strong className="text-slate-900 dark:text-white">{startIndex + 1}</strong> to{' '}
+                      <strong className="text-slate-900 dark:text-white">{Math.min(startIndex + itemsPerPage, products.length)}</strong> of{' '}
+                      <strong className="text-slate-900 dark:text-white">{products.length}</strong> total
+                    </div>
+
+                    <nav aria-label="Product Catalog Pagination">
+                      <ul className="pagination">
+                        {/* Previous */}
+                        <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                          <button
+                            type="button"
+                            className="page-link"
+                            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                            disabled={currentPage === 1}
+                            aria-label="Previous page"
+                          >
+                            Previous
+                          </button>
+                        </li>
+
+                        {/* Page Numbers */}
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => {
+                          const isActive = currentPage === pageNum;
+                          return (
+                            <li
+                              key={pageNum}
+                              className={`page-item ${isActive ? 'active' : ''}`}
+                            >
+                              <button
+                                type="button"
+                                className="page-link"
+                                onClick={() => setCurrentPage(pageNum)}
+                                aria-current={isActive ? 'page' : undefined}
+                              >
+                                {pageNum}
+                              </button>
+                            </li>
+                          );
+                        })}
+
+                        {/* Next */}
+                        <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                          <button
+                            type="button"
+                            className="page-link"
+                            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                            disabled={currentPage === totalPages}
+                            aria-label="Next page"
+                          >
+                            Next
+                          </button>
+                        </li>
+                      </ul>
+                    </nav>
+                  </div>
+                )}
               </div>
             )}
           </div>
