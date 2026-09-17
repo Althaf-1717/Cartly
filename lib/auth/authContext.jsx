@@ -100,7 +100,9 @@ export function AuthProvider({ children }) {
     localStorage.setItem('cartly_auth_user', JSON.stringify(loggedUser));
     setLoading(false);
 
-    if (loggedUser.role === 'admin') {
+    if (redirectUrl) {
+      router.push(redirectUrl);
+    } else if (loggedUser.role === 'admin') {
       router.push('/admin');
     } else {
       router.push('/catalog');
@@ -108,7 +110,7 @@ export function AuthProvider({ children }) {
     return loggedUser;
   };
 
-  const signup = async (userData, role = 'customer') => {
+  const signup = async (userData, role = 'customer', redirectUrl = null) => {
     setLoading(true);
 
     if (StoreService.isUserTerminated(userData.email)) {
@@ -144,7 +146,9 @@ export function AuthProvider({ children }) {
     localStorage.setItem('cartly_auth_user', JSON.stringify(newUser));
     setLoading(false);
 
-    if (role === 'admin') {
+    if (redirectUrl) {
+      router.push(redirectUrl);
+    } else if (role === 'admin') {
       router.push('/admin');
     } else {
       router.push('/catalog');

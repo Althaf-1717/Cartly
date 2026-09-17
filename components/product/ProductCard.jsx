@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Heart, ShoppingBag, Star, Eye, Zap, Lock, Check } from 'lucide-react';
+import { Heart, ShoppingBag, Star, Eye, Zap, Lock, Check, Share2 } from 'lucide-react';
 import { useCart } from '@/lib/context/CartContext';
 import { useWishlist } from '@/lib/context/WishlistContext';
 import { useAuth } from '@/lib/auth/authContext';
@@ -14,6 +14,7 @@ export default function ProductCard({ product, onQuickView }) {
   const { addToCart, items } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const { isAuthenticated } = useAuth();
+  const [copied, setCopied] = useState(false);
 
   const inWishlist = isInWishlist(product.id);
   const discountPercent = calculateDiscount(product.originalPrice, product.price);
@@ -25,7 +26,7 @@ export default function ProductCard({ product, onQuickView }) {
     e.preventDefault();
     e.stopPropagation();
     if (!isAuthenticated) {
-      router.push('/auth/login?role=customer');
+      router.push(`/auth/login?redirect=${encodeURIComponent(`/product/${product.slug}`)}`);
       return;
     }
     addToCart(product, product.variants?.[0] || null, 1);
@@ -35,6 +36,17 @@ export default function ProductCard({ product, onQuickView }) {
     e.preventDefault();
     e.stopPropagation();
     toggleWishlist(product);
+  };
+
+  const handleQuickShare = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (typeof window !== 'undefined') {
+      const url = `${window.location.origin}/product/${product.slug}?shared=true`;
+      navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   return (
@@ -63,19 +75,30 @@ export default function ProductCard({ product, onQuickView }) {
           )}
         </div>
 
-        {/* Wishlist */}
-        <button
-          onClick={handleToggleWishlist}
-          aria-label="Wishlist"
-          className={`absolute top-2.5 right-2.5 p-2 rounded-lg transition-all z-10 active:scale-90 ${
-            inWishlist
-              ? 'bg-red-500 text-white'
-              : 'bg-white/90 dark:bg-slate-900/80 text-slate-500 dark:text-slate-300 hover:text-red-500'
-          }`}
-          title={inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
-        >
-          <Heart className={`w-4 h-4 ${inWishlist ? 'fill-white' : ''}`} />
-        </button>
+        {/* Top Right Action Icons: Wishlist & Share */}
+        <div className="absolute top-2.5 right-2.5 flex flex-col gap-1.5 z-10">
+          <button
+            onClick={handleToggleWishlist}
+            aria-label="Wishlist"
+            className={`p-2 rounded-lg transition-all active:scale-90 shadow-xs ${
+              inWishlist
+                ? 'bg-red-500 text-white'
+                : 'bg-white/90 dark:bg-slate-900/90 text-slate-500 dark:text-slate-300 hover:text-red-500'
+            }`}
+            title={inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
+          >
+            <Heart className={`w-4 h-4 ${inWishlist ? 'fill-white' : ''}`} />
+          </button>
+
+          <button
+            onClick={handleQuickShare}
+            aria-label="Share Link"
+            className="p-2 rounded-lg bg-white/90 dark:bg-slate-900/90 text-slate-500 dark:text-slate-300 hover:text-orange-600 transition-all active:scale-90 shadow-xs"
+            title="Copy share link"
+          >
+            {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Share2 className="w-4 h-4" />}
+          </button>
+        </div>
 
         {/* Quick View */}
         {onQuickView && (

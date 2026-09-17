@@ -14,6 +14,11 @@ import {
   Plus,
   Minus,
   Lock,
+  Share2,
+  Check,
+  Copy,
+  Sparkles,
+  UserCheck,
 } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import AnnouncementBar from '@/components/layout/AnnouncementBar';
@@ -21,6 +26,7 @@ import ProductGallery from '@/components/product/ProductGallery';
 import VariantSelector from '@/components/product/VariantSelector';
 import ReviewSection from '@/components/product/ReviewSection';
 import ProductCard from '@/components/product/ProductCard';
+import ShareProductModal from '@/components/product/ShareProductModal';
 import { useCart } from '@/lib/context/CartContext';
 import { useWishlist } from '@/lib/context/WishlistContext';
 import { useAuth } from '@/lib/auth/authContext';
@@ -32,7 +38,7 @@ export default function ProductDetailPage({ params: paramsPromise }) {
   const router = useRouter();
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   const [product, setProduct] = useState(null);
   const [selectedVariant, setSelectedVariant] = useState(null);
@@ -40,6 +46,8 @@ export default function ProductDetailPage({ params: paramsPromise }) {
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
 
   useEffect(() => {
     async function loadData() {
@@ -70,7 +78,9 @@ export default function ProductDetailPage({ params: paramsPromise }) {
     return (
       <div className="min-h-screen bg-white dark:bg-[#0a0a0a] flex flex-col items-center justify-center text-slate-900 dark:text-white p-6">
         <h2 className="text-2xl font-bold mb-2">Product Not Found</h2>
-        <p className="text-slate-500 dark:text-slate-400/60 text-sm mb-4">The requested item does not exist or has been archived.</p>
+        <p className="text-slate-500 dark:text-slate-400/60 text-sm mb-4">
+          The requested item does not exist or has been archived.
+        </p>
         <Link href="/catalog" className="px-5 py-2.5 bg-orange-600 text-white rounded-xl text-xs font-bold">
           Return to Catalog
         </Link>
@@ -84,7 +94,7 @@ export default function ProductDetailPage({ params: paramsPromise }) {
 
   const handleAddToCart = () => {
     if (!isAuthenticated) {
-      router.push(`/auth/login?redirect=/product/${product.slug}`);
+      router.push(`/auth/login?redirect=${encodeURIComponent(`/product/${product.slug}`)}`);
       return;
     }
     addToCart(product, selectedVariant, quantity);
@@ -92,11 +102,20 @@ export default function ProductDetailPage({ params: paramsPromise }) {
 
   const handleBuyNow = () => {
     if (!isAuthenticated) {
-      router.push('/auth/login?redirect=/checkout');
+      router.push(`/auth/login?redirect=${encodeURIComponent('/checkout')}`);
       return;
     }
     addToCart(product, selectedVariant, quantity);
     router.push('/checkout');
+  };
+
+  const handleQuickCopyLink = () => {
+    if (typeof window !== 'undefined') {
+      const url = `${window.location.origin}/product/${product.slug}?shared=true`;
+      navigator.clipboard.writeText(url);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2500);
+    }
   };
 
   return (
@@ -104,17 +123,61 @@ export default function ProductDetailPage({ params: paramsPromise }) {
       <AnnouncementBar />
       <Navbar />
 
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-16">
-        {/* Breadcrumb */}
-        <div className="text-xs text-slate-500 dark:text-slate-400/60 flex items-center gap-1.5 font-semibold">
-          <Link href="/" className="hover:text-orange-600 dark:hover:text-orange-400 transition">Home</Link>
-          <span>/</span>
-          <Link href={`/catalog?category=${product.category}`} className="hover:text-orange-600 dark:hover:text-orange-400 transition">
-            {product.categoryName || product.category}
-          </Link>
-          <span>/</span>
-          <span className="text-slate-900 dark:text-white font-bold truncate max-w-xs">{product.name}</span>
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-12">
+        {/* Top Breadcrumb & Share Trigger */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400/60 font-semibold border-b border-slate-100 dark:border-slate-850 pb-4">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <Link href="/" className="hover:text-orange-600 dark:hover:text-orange-400 transition">
+              Home
+            </Link>
+            <span>/</span>
+            <Link
+              href={`/catalog?category=${product.category}`}
+              className="hover:text-orange-600 dark:hover:text-orange-400 transition"
+            >
+              {product.categoryName || product.category}
+            </Link>
+            <span>/</span>
+            <span className="text-slate-900 dark:text-white font-bold truncate max-w-xs">
+              {product.name}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 self-start sm:self-auto">
+            <button
+              onClick={handleQuickCopyLink}
+              className="px-3 py-1.5 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl text-[11px] font-bold text-slate-700 dark:text-slate-300 transition flex items-center gap-1.5 border border-slate-200 dark:border-slate-800"
+              title="Copy shareable link"
+            >
+              {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+              <span>{copiedLink ? 'Link Copied!' : 'Copy Link'}</span>
+            </button>
+
+            <button
+              onClick={() => setIsShareModalOpen(true)}
+              className="px-3.5 py-1.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-[11px] font-bold transition flex items-center gap-1.5 shadow-sm shadow-orange-600/20"
+              title="Generate share link"
+            >
+              <Share2 className="w-3.5 h-3.5" />
+              <span>Share Product</span>
+            </button>
+          </div>
         </div>
+
+        {/* LOGGED IN CONFIRMATION BANNER (If user is authenticated) */}
+        {isAuthenticated && (
+          <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center justify-between text-xs text-emerald-700 dark:text-emerald-400 font-bold">
+            <div className="flex items-center gap-2">
+              <UserCheck className="w-4 h-4" />
+              <span>
+                You are logged in as <strong>{user?.fullName || user?.email}</strong>. You can buy or add this item to cart directly!
+              </span>
+            </div>
+            <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-emerald-500/20">
+              Verified Member
+            </span>
+          </div>
+        )}
 
         {/* Product Showcase */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
@@ -126,15 +189,24 @@ export default function ProductDetailPage({ params: paramsPromise }) {
           {/* Controls (6 cols) */}
           <div className="lg:col-span-6 space-y-6">
             <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="px-2.5 py-1 bg-orange-50 dark:bg-slate-900 border border-orange-200 dark:border-slate-800 text-orange-800 dark:text-slate-300 font-bold text-[11px] rounded-lg uppercase tracking-wider">
-                  {product.brand || 'Certified Brand'}
-                </span>
-                {product.isTrending && (
-                  <span className="px-2.5 py-1 bg-slate-800/90 text-slate-100 border border-orange-700 text-[11px] font-bold rounded-lg uppercase flex items-center gap-1">
-                    <Zap className="w-3 h-3 fill-orange-300 text-slate-300" /> Trending
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-1 bg-orange-50 dark:bg-slate-900 border border-orange-200 dark:border-slate-800 text-orange-800 dark:text-slate-300 font-bold text-[11px] rounded-lg uppercase tracking-wider">
+                    {product.brand || 'Certified Brand'}
                   </span>
-                )}
+                  {product.isTrending && (
+                    <span className="px-2.5 py-1 bg-slate-800/90 text-slate-100 border border-orange-700 text-[11px] font-bold rounded-lg uppercase flex items-center gap-1">
+                      <Zap className="w-3 h-3 fill-orange-300 text-slate-300" /> Trending
+                    </span>
+                  )}
+                </div>
+
+                <button
+                  onClick={() => setIsShareModalOpen(true)}
+                  className="text-xs text-slate-500 dark:text-slate-400 hover:text-orange-600 flex items-center gap-1 font-bold transition"
+                >
+                  <Share2 className="w-3.5 h-3.5" /> Share
+                </button>
               </div>
 
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
@@ -146,9 +218,13 @@ export default function ProductDetailPage({ params: paramsPromise }) {
                 <div className="flex items-center gap-1 text-orange-700 dark:text-orange-400 font-bold bg-white dark:bg-[#111111] px-2.5 py-1 rounded-xl border border-slate-200 dark:border-slate-800/60 shadow-xs">
                   <Star className="w-3.5 h-3.5 fill-orange-600 text-orange-600" />
                   <span>{product.rating || 5.0}</span>
-                  <span className="text-slate-400 dark:text-slate-400/60 font-normal">({reviews.length} reviews)</span>
+                  <span className="text-slate-400 dark:text-slate-400/60 font-normal">
+                    ({reviews.length} reviews)
+                  </span>
                 </div>
-                <span className="text-slate-400 dark:text-slate-400/60 font-mono font-semibold">SKU: {selectedVariant?.sku || product.sku}</span>
+                <span className="text-slate-400 dark:text-slate-400/60 font-mono font-semibold">
+                  SKU: {selectedVariant?.sku || product.sku}
+                </span>
               </div>
             </div>
 
@@ -183,9 +259,10 @@ export default function ProductDetailPage({ params: paramsPromise }) {
               />
             )}
 
-            {/* Purchase Action Buttons */}
+            {/* Purchase Action Buttons / Member Login Prompt */}
             <div className="space-y-4 pt-2">
               {isAuthenticated ? (
+                /* 1. AUTHENTICATED USER: DIRECT PURCHASE THROUGH WEBSITE */
                 <>
                   <div className="flex items-center gap-4">
                     <div className="flex items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2">
@@ -195,7 +272,9 @@ export default function ProductDetailPage({ params: paramsPromise }) {
                       >
                         <Minus className="w-4 h-4" />
                       </button>
-                      <span className="px-4 font-bold text-sm text-slate-900 dark:text-white">{quantity}</span>
+                      <span className="px-4 font-bold text-sm text-slate-900 dark:text-white">
+                        {quantity}
+                      </span>
                       <button
                         onClick={() => setQuantity(quantity + 1)}
                         className="text-slate-500 hover:text-slate-900 dark:hover:text-white p-1"
@@ -213,7 +292,11 @@ export default function ProductDetailPage({ params: paramsPromise }) {
 
                     <button
                       onClick={() => toggleWishlist(product)}
-                      className={`p-3.5 rounded-xl border transition ${inWishlist ? 'bg-rose-600 text-white border-rose-600' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'}`}
+                      className={`p-3.5 rounded-xl border transition ${
+                        inWishlist
+                          ? 'bg-rose-600 text-white border-rose-600'
+                          : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+                      }`}
                       aria-label="Wishlist"
                     >
                       <Heart className={`w-5 h-5 ${inWishlist ? 'fill-white' : ''}`} />
@@ -228,28 +311,48 @@ export default function ProductDetailPage({ params: paramsPromise }) {
                   </button>
                 </>
               ) : (
-                /* GUEST USER CTA */
-                <div className="p-5 bg-orange-50 dark:bg-slate-900/60 border border-orange-200 dark:border-slate-800 rounded-2xl space-y-3 text-center shadow-xs">
-                  <div className="flex items-center justify-center gap-2 text-orange-900 dark:text-slate-300 font-bold text-sm">
-                    <Lock className="w-4 h-4 text-orange-600 dark:text-orange-400" /> Member Purchasing Required
+                /* 2. GUEST USER (OPENED VIA SHARED LINK): DISPLAY PRODUCT + CREATE ACCOUNT OR LOGIN CTA */
+                <div className="p-6 bg-gradient-to-b from-orange-500/10 via-orange-500/5 to-transparent border border-orange-500/30 rounded-3xl space-y-4 shadow-md">
+                  <div className="flex items-center justify-between">
+                    <span className="px-3 py-1 rounded-full bg-orange-600 text-white text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-sm">
+                      <Sparkles className="w-3.5 h-3.5" /> Shared Product Showcase
+                    </span>
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold">
+                      Member-Exclusive Checkout
+                    </span>
                   </div>
-                  <p className="text-xs text-slate-600 dark:text-slate-200/70">
-                    Sign in to your customer account to add this item to your cart and complete checkout.
+
+                  <div>
+                    <h3 className="text-base font-black text-slate-900 dark:text-white">
+                      Want to order {product.name}?
+                    </h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+                      You are viewing this product through a shared link. To add this item to your cart, unlock verified member pricing, and complete your purchase, please log in or create a free account.
+                    </p>
+                  </div>
+
+                  {/* Two Primary Action Buttons: Create Account OR Login */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                    <Link
+                      href={`/auth/signup?redirect=${encodeURIComponent(`/product/${product.slug}`)}`}
+                      className="py-3.5 px-4 bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs rounded-xl shadow-md shadow-orange-600/20 text-center transition flex items-center justify-center gap-2"
+                    >
+                      <UserCheck className="w-4 h-4" />
+                      <span>Create Free Account</span>
+                    </Link>
+
+                    <Link
+                      href={`/auth/login?redirect=${encodeURIComponent(`/product/${product.slug}`)}`}
+                      className="py-3.5 px-4 bg-white dark:bg-[#111111] hover:bg-slate-100 dark:hover:bg-slate-900 text-slate-900 dark:text-white font-bold text-xs rounded-xl border border-slate-200 dark:border-slate-800 text-center transition flex items-center justify-center gap-2 shadow-xs"
+                    >
+                      <Lock className="w-4 h-4 text-orange-600" />
+                      <span>Login to Your Account</span>
+                    </Link>
+                  </div>
+
+                  <p className="text-[10px] text-center text-slate-500 dark:text-slate-400">
+                    Takes less than 30 seconds • Returning directly back to this product upon sign in
                   </p>
-                  <div className="grid grid-cols-2 gap-3 pt-1">
-                    <Link
-                      href={`/auth/login?redirect=/product/${product.slug}`}
-                      className="py-3 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs rounded-xl shadow-md transition"
-                    >
-                      Sign In Now
-                    </Link>
-                    <Link
-                      href="/auth/signup"
-                      className="py-3 bg-white dark:bg-slate-800 hover:bg-orange-100 dark:hover:bg-slate-800 text-slate-900 dark:text-white font-bold text-xs rounded-xl border border-slate-200 dark:border-orange-700 transition"
-                    >
-                      Create Account
-                    </Link>
-                  </div>
                 </div>
               )}
             </div>
@@ -272,13 +375,16 @@ export default function ProductDetailPage({ params: paramsPromise }) {
           </div>
         </div>
 
-        {/* Specifications */}
+        {/* Technical Specifications */}
         {product.specifications && (
           <div className="bg-white dark:bg-[#111111] border border-slate-200 dark:border-slate-800/60 rounded-2xl p-8 space-y-6 shadow-xs">
             <h3 className="text-xl font-bold text-slate-900 dark:text-white">Technical Specifications</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
               {Object.entries(product.specifications).map(([key, value]) => (
-                <div key={key} className="flex justify-between py-3 px-4 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-orange-850">
+                <div
+                  key={key}
+                  className="flex justify-between py-3 px-4 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-orange-850"
+                >
                   <span className="text-slate-500 dark:text-slate-300/70 font-semibold">{key}</span>
                   <span className="text-slate-900 dark:text-slate-300 font-bold">{value}</span>
                 </div>
@@ -301,6 +407,13 @@ export default function ProductDetailPage({ params: paramsPromise }) {
             </div>
           </div>
         )}
+
+        {/* SHARE PRODUCT MODAL */}
+        <ShareProductModal
+          isOpen={isShareModalOpen}
+          onClose={() => setIsShareModalOpen(false)}
+          product={product}
+        />
       </main>
     </div>
   );

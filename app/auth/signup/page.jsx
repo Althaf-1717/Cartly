@@ -3,12 +3,13 @@
 import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { ShoppingBag, ArrowRight, UserPlus } from 'lucide-react';
+import { ShoppingBag, ArrowRight, UserPlus, Sparkles } from 'lucide-react';
 import { useAuth } from '@/lib/auth/authContext';
 
 function SignupForm() {
   const searchParams = useSearchParams();
   const initialRole = searchParams.get('role') === 'admin' ? 'admin' : 'customer';
+  const redirectUrl = searchParams.get('redirect');
 
   const { register } = useAuth();
   const [role, setRole] = useState(initialRole);
@@ -21,13 +22,17 @@ function SignupForm() {
   const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
-    await register({
-      fullName,
-      email,
-      password,
-      phone: phone || '+91 98765 43210',
+    await register(
+      {
+        fullName,
+        email,
+        password,
+        phone: phone || '+91 98765 43210',
+        role,
+      },
       role,
-    });
+      redirectUrl || null
+    );
   };
 
   return (
@@ -42,6 +47,13 @@ function SignupForm() {
         <h2 className="text-xl font-bold text-slate-900 dark:text-white">Create New Account</h2>
         <p className="text-xs text-slate-500 dark:text-slate-300/70">Join Cartly to explore or manage hardware</p>
       </div>
+
+      {redirectUrl && (
+        <div className="p-3 bg-orange-500/10 border border-orange-500/20 rounded-xl text-xs text-orange-600 dark:text-orange-400 font-bold flex items-center gap-2">
+          <Sparkles className="w-4 h-4 shrink-0" />
+          <span>Create an account to continue directly to your selected product!</span>
+        </div>
+      )}
 
       <div className="grid grid-cols-2 gap-1.5 p-1 bg-slate-100 dark:bg-slate-900/80 rounded-xl border border-slate-200 dark:border-slate-800 text-xs">
         <button
@@ -128,7 +140,10 @@ function SignupForm() {
 
       <div className="text-center text-xs text-slate-500 dark:text-slate-400/60 pt-3 border-t border-slate-200 dark:border-slate-800/60">
         Already registered?{' '}
-        <Link href="/auth/login" className="text-orange-600 dark:text-orange-400 font-bold hover:underline">
+        <Link
+          href={redirectUrl ? `/auth/login?redirect=${encodeURIComponent(redirectUrl)}` : '/auth/login'}
+          className="text-orange-600 dark:text-orange-400 font-bold hover:underline"
+        >
           Sign In Here →
         </Link>
       </div>
