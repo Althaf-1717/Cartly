@@ -19,6 +19,11 @@ import {
   Moon,
   Heart,
   Search,
+  Ticket,
+  MapPin,
+  Bell,
+  CreditCard,
+  Gift,
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth/authContext';
 import { useTheme } from '@/lib/context/ThemeContext';
@@ -188,82 +193,121 @@ export default function Navbar() {
               <div className="relative" ref={userDropdownRef}>
                 <button
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                  className="p-0.5 rounded-full hover:ring-2 hover:ring-slate-300 dark:hover:ring-slate-600 transition-all focus:outline-none"
+                  className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-all focus:outline-none"
                   title={user?.fullName || 'Profile'}
                   aria-label="User menu"
                 >
-                  <img
-                    src={user?.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&q=80'}
-                    alt={user?.fullName || 'User'}
-                    className="w-8 h-8 rounded-full object-cover ring-2 ring-slate-200 dark:ring-slate-700"
-                  />
+                  <User className="w-[18px] h-[18px] text-slate-500 dark:text-slate-400" />
+                  <span className="hidden sm:inline text-sm font-medium text-slate-700 dark:text-slate-200 max-w-[100px] truncate">
+                    {user?.fullName?.split(' ')[0] || 'Account'}
+                  </span>
+                  <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${userDropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 {userDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-60 bg-white dark:bg-[#161616] border border-slate-200 dark:border-slate-800 rounded-xl shadow-lg p-2 z-50 text-sm text-slate-900 dark:text-white">
-                    <div className="pb-2 mb-2 border-b border-slate-100 dark:border-slate-800 flex items-center gap-3 px-2">
-                      <img
-                        src={user?.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&q=80'}
-                        alt={user?.fullName}
-                        className="w-9 h-9 rounded-full object-cover"
-                      />
-                      <div className="min-w-0 flex-1">
-                        <p className="font-semibold text-slate-900 dark:text-white truncate text-sm">{user?.fullName}</p>
-                        <p className="text-slate-500 dark:text-slate-400 text-xs truncate">{user?.email}</p>
-                      </div>
+                  <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-[#161616] border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl z-50 py-2 text-sm">
+                    {/* Header */}
+                    <div className="px-4 py-2.5 border-b border-slate-100 dark:border-slate-800">
+                      <p className="font-semibold text-slate-900 dark:text-white text-sm">Your Account</p>
                     </div>
 
-                    <div className="space-y-0.5">
-                      {isAdmin ? (
-                        <Link
-                          href="/admin"
-                          onClick={() => setUserDropdownOpen(false)}
-                          className="flex items-center gap-2 px-2 py-2 rounded-lg text-sm font-medium bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:opacity-90 transition"
-                        >
-                          <LayoutDashboard className="w-4 h-4" /> Admin Panel
-                        </Link>
-                      ) : (
-                        <Link
-                          href="/catalog"
-                          onClick={() => setUserDropdownOpen(false)}
-                          className="flex items-center gap-2 px-2 py-2 rounded-lg text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition font-medium"
-                        >
-                          <ShoppingBag className="w-4 h-4 text-slate-400" /> Products
-                        </Link>
-                      )}
-
+                    {/* Menu Items */}
+                    <div className="py-1">
                       <Link
                         href="/account"
                         onClick={() => setUserDropdownOpen(false)}
-                        className="flex items-center gap-2 px-2 py-2 rounded-lg text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition font-medium"
+                        className="flex items-center gap-3 px-4 py-2.5 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
                       >
-                        <User className="w-4 h-4 text-slate-400" /> My Account
-                      </Link>
-
-                      <Link
-                        href="/wishlist"
-                        onClick={() => setUserDropdownOpen(false)}
-                        className="flex items-center gap-2 px-2 py-2 rounded-lg text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition font-medium"
-                      >
-                        <Heart className="w-4 h-4 text-slate-400" /> Wishlist ({wishlistCount})
+                        <User className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+                        <span>My Profile</span>
                       </Link>
 
                       <Link
                         href="/account/orders/recent"
                         onClick={() => setUserDropdownOpen(false)}
-                        className="flex items-center gap-2 px-2 py-2 rounded-lg text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition font-medium"
+                        className="flex items-center gap-3 px-4 py-2.5 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
                       >
-                        <Package className="w-4 h-4 text-slate-400" /> Track Orders
+                        <Package className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+                        <span>Orders</span>
                       </Link>
 
+                      <Link
+                        href="/catalog"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+                      >
+                        <Ticket className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+                        <span>Coupons</span>
+                      </Link>
+
+                      <Link
+                        href="/account"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+                      >
+                        <CreditCard className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+                        <span>Saved Cards & Wallet</span>
+                      </Link>
+
+                      <Link
+                        href="/account/addresses"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+                      >
+                        <MapPin className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+                        <span>Saved Addresses</span>
+                      </Link>
+
+                      <Link
+                        href="/wishlist"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+                      >
+                        <Heart className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+                        <span>Wishlist</span>
+                      </Link>
+
+                      <Link
+                        href="/account"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+                      >
+                        <Gift className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+                        <span>Gift Cards</span>
+                      </Link>
+
+                      <Link
+                        href="/account"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+                      >
+                        <Bell className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+                        <span>Notifications</span>
+                      </Link>
+
+                      {isAdmin && (
+                        <Link
+                          href="/admin"
+                          onClick={() => setUserDropdownOpen(false)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+                        >
+                          <LayoutDashboard className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+                          <span>Admin Panel</span>
+                        </Link>
+                      )}
+                    </div>
+
+                    {/* Logout */}
+                    <div className="border-t border-slate-100 dark:border-slate-800 pt-1">
                       <button
                         onClick={() => {
                           logout();
                           setUserDropdownOpen(false);
                         }}
-                        className="w-full flex items-center gap-2 px-2 py-2 rounded-lg text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition font-medium text-left"
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition text-left"
                       >
-                        <LogOut className="w-4 h-4" /> Sign Out
+                        <LogOut className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+                        <span>Logout</span>
                       </button>
                     </div>
                   </div>
