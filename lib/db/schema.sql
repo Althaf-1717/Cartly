@@ -189,6 +189,7 @@ CREATE POLICY "Public insert access for orders" ON public.orders FOR INSERT WITH
 CREATE POLICY "Public update access for orders" ON public.orders FOR UPDATE USING (true);
 CREATE POLICY "Public insert access for order_items" ON public.order_items FOR INSERT WITH CHECK (true);
 CREATE POLICY "Public manage access for products" ON public.products FOR ALL USING (true);
+CREATE POLICY "Public manage access for categories" ON public.categories FOR ALL USING (true);
 CREATE POLICY "Public manage access for customers" ON public.customers FOR ALL USING (true);
 CREATE POLICY "Public manage access for terminated_users" ON public.terminated_users FOR ALL USING (true);
 CREATE POLICY "Public insert access for audit_logs" ON public.audit_logs FOR INSERT WITH CHECK (true);
