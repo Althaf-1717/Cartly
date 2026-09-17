@@ -3,12 +3,12 @@
 import React from 'react';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 
-export default function StatCard({ title, value, change, isPositive, icon: Icon, color = 'yellow' }) {
+export default function StatCard({ title, value, change, isPositive, icon: Icon }) {
   return (
-    <div className="bg-[#18181b] border border-zinc-800 p-6 rounded-3xl shadow-xl">
+    <div className="bg-[#111111] border border-slate-800/80 p-6 rounded-2xl shadow-md">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">{title}</span>
-        <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-yellow-400/10 border border-yellow-400/20 text-yellow-400">
+        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{title}</span>
+        <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-orange-500/10 border border-orange-500/20 text-orange-400">
           {Icon && <Icon className="w-5 h-5" />}
         </div>
       </div>
@@ -18,7 +18,7 @@ export default function StatCard({ title, value, change, isPositive, icon: Icon,
           <span
             className={`flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-md ${
               isPositive
-                ? 'bg-yellow-400/10 text-yellow-400 border border-yellow-400/30'
+                ? 'bg-orange-500/10 text-orange-400 border border-orange-500/30'
                 : 'bg-red-500/10 text-red-400 border border-red-500/30'
             }`}
           >

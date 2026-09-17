@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, Tag } from 'lucide-react';
 import AdminHeader from '@/components/admin/AdminHeader';
 import { StoreService } from '@/lib/db/storeService';
 import { formatCurrency } from '@/lib/utils/formatters';
@@ -46,117 +46,115 @@ export default function AdminCouponsPage() {
   };
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="flex-1 flex flex-col bg-[#0a0a0a]">
       <AdminHeader
         title="Coupons & Promotional Rules"
         subtitle="Manage discount codes, minimum order requirements, and campaign activations"
       />
 
-      <main className="p-8 space-y-8 max-w-7xl">
-        <div className="bg-[#18181b] border border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-xl space-y-4">
-          <h3 className="text-base font-black text-white flex items-center gap-2">
-            <Plus className="w-4 h-4 text-yellow-400" /> Create Promotion Code
+      <main className="p-6 sm:p-8 space-y-8 max-w-7xl">
+        <div className="bg-[#111111] border border-slate-800/80 rounded-2xl p-6 sm:p-8 shadow-md space-y-4">
+          <h3 className="text-base font-bold text-white flex items-center gap-2">
+            <Plus className="w-4 h-4 text-orange-400" /> Create Promotion Code
           </h3>
-
-          <form onSubmit={handleCreate} className="grid grid-cols-1 sm:grid-cols-4 gap-4 text-xs">
+          <form onSubmit={handleCreate} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
             <div>
-              <label className="block text-zinc-300 font-bold mb-1">Coupon Code</label>
+              <label className="block text-slate-300 font-bold mb-1">Coupon Code</label>
               <input
                 type="text"
                 required
-                placeholder="e.g. FLASH30"
+                placeholder="e.g. CARTLY20"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-yellow-400 font-mono uppercase font-bold focus:outline-none focus:border-yellow-400"
+                className="w-full px-3.5 py-2.5 bg-[#0a0a0a] border border-slate-800 rounded-xl text-white uppercase font-mono focus:outline-none focus:border-orange-500"
               />
             </div>
-
             <div>
-              <label className="block text-zinc-300 font-bold mb-1">Discount Type</label>
+              <label className="block text-slate-300 font-bold mb-1">Discount Type</label>
               <select
                 value={discountType}
                 onChange={(e) => setDiscountType(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-yellow-400"
+                className="w-full px-3.5 py-2.5 bg-[#0a0a0a] border border-slate-800 rounded-xl text-white focus:outline-none focus:border-orange-500"
               >
                 <option value="percentage">Percentage (%)</option>
                 <option value="fixed">Fixed Amount (₹)</option>
               </select>
             </div>
-
             <div>
-              <label className="block text-zinc-300 font-bold mb-1">Discount Value</label>
+              <label className="block text-slate-300 font-bold mb-1">Discount Value</label>
               <input
                 type="number"
                 required
                 value={discountValue}
                 onChange={(e) => setDiscountValue(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-yellow-400"
+                className="w-full px-3.5 py-2.5 bg-[#0a0a0a] border border-slate-800 rounded-xl text-white focus:outline-none focus:border-orange-500 font-mono"
               />
             </div>
-
             <div>
-              <label className="block text-zinc-300 font-bold mb-1">Min Order (₹)</label>
+              <label className="block text-slate-300 font-bold mb-1">Min Order Amount (₹)</label>
               <input
                 type="number"
                 value={minOrder}
                 onChange={(e) => setMinOrder(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-yellow-400"
+                className="w-full px-3.5 py-2.5 bg-[#0a0a0a] border border-slate-800 rounded-xl text-white focus:outline-none focus:border-orange-500 font-mono"
               />
             </div>
-
-            <div className="sm:col-span-3">
-              <label className="block text-zinc-300 font-bold mb-1">Promo Description</label>
+            <div className="sm:col-span-2 lg:col-span-3">
+              <label className="block text-slate-300 font-bold mb-1">Campaign Description</label>
               <input
                 type="text"
-                placeholder="e.g. 15% off for weekend flash sale"
+                placeholder="e.g. Get 20% off on your first order"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-yellow-400"
+                className="w-full px-3.5 py-2.5 bg-[#0a0a0a] border border-slate-800 rounded-xl text-white focus:outline-none focus:border-orange-500"
               />
             </div>
-
             <div className="flex items-end">
               <button
                 type="submit"
-                className="w-full py-2.5 bg-yellow-400 hover:bg-yellow-300 text-black font-black rounded-xl transition shadow-md"
+                className="w-full py-2.5 bg-orange-600 hover:bg-orange-500 text-white font-bold rounded-xl transition shadow-md shadow-orange-600/20"
               >
-                Save Promo Code
+                Publish Coupon
               </button>
             </div>
           </form>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {coupons.map((c) => (
             <div
               key={c.id}
-              className={`p-6 rounded-3xl border transition space-y-4 shadow-xl ${
-                c.isActive ? 'bg-[#18181b] border-zinc-800' : 'bg-zinc-950 border-zinc-850 opacity-60'
-              }`}
+              className="bg-[#111111] border border-slate-800/80 rounded-2xl p-5 shadow-md flex flex-col justify-between space-y-4"
             >
-              <div className="flex items-center justify-between">
-                <span className="font-mono font-black text-lg text-yellow-400 bg-zinc-900 px-3 py-1 rounded-xl border border-zinc-800">
-                  {c.code}
-                </span>
-                <button
-                  onClick={() => handleToggle(c.id)}
-                  className={`px-3 py-1 rounded-full text-[10px] font-black uppercase transition ${
-                    c.isActive ? 'bg-yellow-400 text-black' : 'bg-zinc-800 text-zinc-400'
-                  }`}
-                >
-                  {c.isActive ? 'Active' : 'Disabled'}
-                </button>
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="font-mono font-black text-orange-400 text-base">{c.code}</span>
+                  <span
+                    className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                      c.isActive
+                        ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                        : 'bg-slate-800 text-slate-400'
+                    }`}
+                  >
+                    {c.isActive ? 'Active' : 'Disabled'}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 mt-2">{c.description}</p>
+                <div className="mt-3 space-y-1 text-[11px] text-slate-500 font-mono">
+                  <p>
+                    Value: {c.discountType === 'percentage' ? `${c.discountValue}% OFF` : `₹${c.discountValue} OFF`}
+                  </p>
+                  <p>Min Order: {formatCurrency(c.minOrderAmount || 0)}</p>
+                </div>
               </div>
 
-              <p className="text-xs text-zinc-300">{c.description}</p>
-
-              <div className="pt-3 border-t border-zinc-850 text-[11px] text-zinc-400 space-y-1">
-                <p>
-                  Discount: <strong className="text-white">{c.discountType === 'percentage' ? `${c.discountValue}%` : formatCurrency(c.discountValue)}</strong>
-                </p>
-                {c.minOrderAmount > 0 && (
-                  <p>Min Spend: <strong className="text-white">{formatCurrency(c.minOrderAmount)}</strong></p>
-                )}
+              <div className="pt-3 border-t border-slate-800 flex justify-end">
+                <button
+                  onClick={() => handleToggle(c.id)}
+                  className="text-xs font-bold text-orange-400 hover:underline"
+                >
+                  {c.isActive ? 'Deactivate' : 'Activate'}
+                </button>
               </div>
             </div>
           ))}

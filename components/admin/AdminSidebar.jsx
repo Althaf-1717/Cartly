@@ -14,14 +14,13 @@ import {
   MessageSquare,
   ShieldAlert,
   ArrowLeft,
-  SlidersHorizontal,
 } from 'lucide-react';
 
 const navItems = [
   { name: 'Executive Overview', href: '/admin', icon: LayoutDashboard },
   { name: 'Products & Inventory', href: '/admin/products', icon: Package },
-  { name: 'Categories & Brands', href: '/admin/categories', icon: Layers },
-  { name: 'Order Fulfillment', href: '/admin/orders', icon: ShoppingBag },
+  { name: 'Categories & Departments', href: '/admin/categories', icon: Layers },
+  { name: 'Order Management', href: '/admin/orders', icon: ShoppingBag },
   { name: 'Customer Directory', href: '/admin/customers', icon: Users },
   { name: 'Coupons & Promos', href: '/admin/coupons', icon: Tag },
   { name: 'Hero Banners & CMS', href: '/admin/banners', icon: ImageIcon },
@@ -33,20 +32,19 @@ export default function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 bg-black border-r border-zinc-800 flex flex-col justify-between shrink-0 min-h-screen text-zinc-300">
+    <aside className="w-64 bg-[#0a0a0a] border-r border-slate-800/80 flex flex-col justify-between shrink-0 min-h-screen text-slate-300">
       <div>
-        {/* Header */}
-        <div className="p-6 border-b border-zinc-850 flex items-center justify-between">
-          <Link href="/admin" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-yellow-400 flex items-center justify-center text-black font-bold">
-              <SlidersHorizontal className="w-4 h-4" />
-            </div>
-            <div>
-              <h2 className="font-mono font-black text-white text-base tracking-tight">CARTLY</h2>
-              <span className="text-[10px] text-yellow-400 font-bold uppercase tracking-wider block -mt-1">
-                Admin Hub
-              </span>
-            </div>
+        {/* Header with Cartly Logo */}
+        <div className="p-6 border-b border-slate-800/80 flex items-center justify-between">
+          <Link href="/admin" className="flex items-center gap-3">
+            <img
+              src="/logo.png"
+              alt="Cartly"
+              className="h-7 w-auto object-contain dark:brightness-0 dark:invert"
+            />
+            <span className="text-[10px] bg-orange-600/20 text-orange-400 border border-orange-500/30 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
+              Admin
+            </span>
           </Link>
         </div>
 
@@ -61,11 +59,11 @@ export default function AdminSidebar() {
                 href={item.href}
                 className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold transition ${
                   isActive
-                    ? 'bg-yellow-400 text-black font-black shadow-md'
-                    : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
+                    ? 'bg-orange-600 text-white font-black shadow-md shadow-orange-600/20'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-900/60'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-black' : 'text-zinc-500'}`} />
+                <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
                 <span>{item.name}</span>
               </Link>
             );
@@ -74,12 +72,12 @@ export default function AdminSidebar() {
       </div>
 
       {/* Return to storefront */}
-      <div className="p-4 border-t border-zinc-850 bg-zinc-950">
+      <div className="p-4 border-t border-slate-800/80 bg-[#070707]">
         <Link
           href="/"
-          className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-xs font-bold text-zinc-200 transition"
+          className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-bold text-slate-200 hover:text-white transition"
         >
-          <ArrowLeft className="w-4 h-4 text-yellow-400" /> Back to Storefront
+          <ArrowLeft className="w-4 h-4 text-orange-500" /> Back to Storefront
         </Link>
       </div>
     </aside>

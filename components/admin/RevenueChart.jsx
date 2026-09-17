@@ -36,23 +36,31 @@ export default function RevenueChart() {
   const data = timeframe === 'week' ? weeklyData : monthlyData;
 
   return (
-    <div className="bg-[#18181b] border border-zinc-800 p-6 rounded-3xl shadow-xl space-y-6">
+    <div className="bg-[#111111] border border-slate-800/80 p-6 rounded-2xl shadow-md space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h3 className="font-bold text-white text-base">Commerce Sales Velocity</h3>
-          <p className="text-xs text-zinc-400 mt-0.5">Real-time payment order completions</p>
+          <p className="text-xs text-slate-400 mt-0.5">Real-time payment order completions</p>
         </div>
 
-        <div className="flex gap-1 bg-zinc-900 p-1 rounded-xl border border-zinc-800 self-start">
+        <div className="flex gap-1 bg-slate-900/80 p-1 rounded-xl border border-slate-800 self-start">
           <button
             onClick={() => setTimeframe('week')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${timeframe === 'week' ? 'bg-yellow-400 text-black font-black shadow-sm' : 'text-zinc-400 hover:text-white'}`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+              timeframe === 'week'
+                ? 'bg-orange-600 text-white font-black shadow-sm'
+                : 'text-slate-400 hover:text-white'
+            }`}
           >
             Last 7 Days
           </button>
           <button
             onClick={() => setTimeframe('month')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${timeframe === 'month' ? 'bg-yellow-400 text-black font-black shadow-sm' : 'text-zinc-400 hover:text-white'}`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+              timeframe === 'month'
+                ? 'bg-orange-600 text-white font-black shadow-sm'
+                : 'text-slate-400 hover:text-white'
+            }`}
           >
             Last 6 Months
           </button>
@@ -64,14 +72,14 @@ export default function RevenueChart() {
           <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
             <defs>
               <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#facc15" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#facc15" stopOpacity={0} />
+                <stop offset="5%" stopColor="#ea580c" stopOpacity={0.4} />
+                <stop offset="95%" stopColor="#ea580c" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
-            <XAxis dataKey="name" stroke="#71717a" fontSize={12} tickLine={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
+            <XAxis dataKey="name" stroke="#64748b" fontSize={12} tickLine={false} />
             <YAxis
-              stroke="#71717a"
+              stroke="#64748b"
               fontSize={12}
               tickLine={false}
               tickFormatter={(val) => `₹${val / 1000}k`}
@@ -80,12 +88,12 @@ export default function RevenueChart() {
               content={({ active, payload, label }) => {
                 if (active && payload && payload.length) {
                   return (
-                    <div className="bg-black border border-zinc-700 p-3 rounded-2xl shadow-2xl text-xs text-white">
+                    <div className="bg-[#0a0a0a] border border-slate-700 p-3 rounded-xl shadow-2xl text-xs text-white">
                       <p className="font-bold text-white mb-1">{label}</p>
-                      <p className="text-yellow-400 font-bold">
+                      <p className="text-orange-400 font-bold">
                         Revenue: {formatCurrency(payload[0].value)}
                       </p>
-                      <p className="text-zinc-400 mt-0.5">
+                      <p className="text-slate-400 mt-0.5">
                         Orders: {payload[0].payload.orders}
                       </p>
                     </div>
@@ -97,7 +105,7 @@ export default function RevenueChart() {
             <Area
               type="monotone"
               dataKey="revenue"
-              stroke="#facc15"
+              stroke="#ea580c"
               strokeWidth={3}
               fillOpacity={1}
               fill="url(#colorRevenue)"
