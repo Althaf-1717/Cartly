@@ -200,16 +200,16 @@ export default function HomePage() {
                 <Link
                   key={`${cat.id}-${idx}`}
                   href={`/catalog?category=${cat.slug}`}
-                  className="group w-48 sm:w-52 shrink-0 bg-white dark:bg-[#111] border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 rounded-xl p-4 flex flex-col items-center text-center transition-all hover:-translate-y-0.5"
+                  className="group w-36 sm:w-40 shrink-0 bg-white dark:bg-[#111] border border-slate-200 dark:border-slate-800 hover:border-orange-500 rounded-2xl p-2.5 flex flex-col items-center text-center transition-all hover:-translate-y-0.5 shadow-xs"
                 >
-                  <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-lg overflow-hidden bg-slate-50 dark:bg-[#1a1a1a] mb-3 group-hover:scale-105 transition-transform">
-                    <img src={cat.imageUrl} alt={cat.name} className="w-full h-full object-cover" />
+                  <div className="w-full h-24 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 mb-2">
+                    <img src={cat.imageUrl} alt={cat.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   </div>
-                  <h3 className="text-sm font-medium text-slate-900 dark:text-white group-hover:text-slate-600 dark:group-hover:text-slate-300 transition">
+                  <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white group-hover:text-orange-600 transition truncate w-full">
                     {cat.name}
                   </h3>
-                  <span className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
-                    {cat.itemCount || 6}+ Products
+                  <span className="text-[10px] text-slate-400 mt-0.5">
+                    {cat.itemCount || 10}+ Items
                   </span>
                 </Link>
               ))}
