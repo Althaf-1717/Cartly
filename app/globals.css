@@ -2,22 +2,66 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@theme {
+  --color-surface: var(--color-surface);
+  --color-subtle: var(--color-background-subtle);
+  --color-bg: var(--color-background);
+  --color-text: var(--color-text);
+  --color-muted: var(--color-text-muted);
+  --color-border: var(--color-border);
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-accent-active: var(--color-accent-active);
+  --color-dark: var(--color-dark);
+}
+
+:root {
+  color-scheme: light;
+  --color-background: #ffffff;
+  --color-background-subtle: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #0f172a;
+  --color-text-muted: #64748b;
+  --color-border: #e2e8f0;
+  --color-accent: #ea580c;
+  --color-accent-hover: #c2410c;
+  --color-accent-active: #9a3412;
+  --color-dark: #0f172a;
+
+  --bs-tooltip-bg: #0f172a;
+  --bs-tooltip-color: #ffffff;
+  --bs-tooltip-padding-x: 0.75rem;
+  --bs-tooltip-padding-y: 0.4rem;
+  --bs-tooltip-font-size: 0.75rem;
+  --bs-tooltip-border-radius: 0.625rem;
+  --bs-tooltip-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+.dark {
+  color-scheme: dark;
+  --color-background: #0a0a0a;
+  --color-background-subtle: #111111;
+  --color-surface: #161616;
+  --color-text: #fafafa;
+  --color-text-muted: #94a3b8;
+  --color-border: #1e293b;
+  --color-accent: #ea580c;
+  --color-accent-hover: #fb923c;
+  --color-accent-active: #f97316;
+  --color-dark: #000000;
+
+  --bs-tooltip-bg: #ea580c;
+  --bs-tooltip-color: #ffffff;
+}
+
 @layer base {
-  :root {
-    color-scheme: light;
-  }
-
-  .dark {
-    color-scheme: dark;
-  }
-
   html {
     scroll-behavior: smooth;
   }
 
   body {
-    background-color: #ffffff;
-    color: #0f172a;
+    background-color: var(--color-background);
+    color: var(--color-text);
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
@@ -26,8 +70,8 @@
   }
 
   .dark body {
-    background-color: #0a0a0a;
-    color: #fafafa;
+    background-color: var(--color-background);
+    color: var(--color-text);
   }
 }
 
@@ -38,10 +82,6 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.dark ::-webkit-scrollbar-track {
   background: transparent;
 }
 
@@ -271,22 +311,7 @@
   border-color: #1e293b;
 }
 
-/* Custom Tooltip Themed via CSS Variables */
-:root {
-  --bs-tooltip-bg: #0f172a;
-  --bs-tooltip-color: #ffffff;
-  --bs-tooltip-padding-x: 0.75rem;
-  --bs-tooltip-padding-y: 0.4rem;
-  --bs-tooltip-font-size: 0.75rem;
-  --bs-tooltip-border-radius: 0.625rem;
-  --bs-tooltip-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-}
-
-.dark {
-  --bs-tooltip-bg: #ea580c;
-  --bs-tooltip-color: #ffffff;
-}
-
+/* Custom Tooltip */
 .custom-tooltip-wrapper {
   position: relative;
   display: inline-flex;
@@ -329,4 +354,3 @@
   visibility: visible;
   transform: translateX(-50%) translateY(0);
 }
-
